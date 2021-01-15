@@ -1,5 +1,5 @@
 # COVID19 Vaccination Italy
-This Python script shown and save some charts that explain the COVID-19 vaccination in Italy. The datasets are available at [italia/covid19-opendata-vaccini](https://github.com/italia/covid19-opendata-vaccini)
+This Python script shown and save some charts that explain how the COVID-19 vaccination in Italy is going. The datasets are available at [italia/covid19-opendata-vaccini](https://github.com/italia/covid19-opendata-vaccini).
 
 # Prereqs
 * [Python](https://www.python.org/) 
@@ -23,3 +23,21 @@ The charts are saved in "Charts" folder.
 # Charts
 
 Here are shown some charts that this script creates. If `SHOW_CHARTS_ENABLED = 1`, the charts are shown in the command windows. If `SAVING_CHARTS_ENABLED = 0`, the charts will not be saved.
+
+Doses administered for each region
+![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-01-14%20-%200.png)
+
+Doses delivered for each region
+![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-01-14%20-%201.png)
+
+Percentage of administration for each region
+![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-01-14%20-%202.png)
+
+Total vaccinations by age group
+![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-01-14%20-%203.png)
+
+Total vaccinations by age group and gender
+![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-01-14%20-%204.png)
+
+Totale vaccinazioni per operatori socio sanitari, personale non sanitario, guests of esidential care homes
+![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-01-14%20-%205.png)
