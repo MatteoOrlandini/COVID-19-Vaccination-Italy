@@ -22,7 +22,7 @@ The charts are saved in "Charts" folder.
 
 # Charts
 
-Here are shown some charts that this script creates. If `SHOW_CHARTS_ENABLED = 1`, the charts are shown in the command windows. If `SAVING_CHARTS_ENABLED = 0`, the charts will not be saved.
+Here are shown some charts that this script created on 14/01/2021. If `SHOW_CHARTS_ENABLED = 1`, the charts are shown in the command windows. If `SAVING_CHARTS_ENABLED = 0`, the charts will not be saved.
 
 Doses administered for each region
 ![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-01-14%20-%200.png)
