@@ -1,5 +1,3 @@
-#https://github.com/owid/covid-19-data/tree/master/public/data
-
 import urllib.request
 import matplotlib.pyplot as plt
 import numpy as np
@@ -14,7 +12,7 @@ SHOW_CHARTS_ENABLED = 0
 SAVING_CHARTS_ENABLED = 1
 
 # the folder that contains the saved charts
-DESTINATION_FOLDER = "/Charts"
+DESTINATION_FOLDER = "Charts"
 
 # constant for vaccini-summary-latest.csv
 INDICE_COLONNA_DOSI_SOMMINISTATE = 1
@@ -154,7 +152,7 @@ def saveFigures(date, figures):
 	for figure in figures:
 		figManager = plt.get_current_fig_manager()
 		figManager.full_screen_toggle()
-		figure.savefig(fname = DESTINATION_FOLDER+str(date)+" - "+str(cont)+".png", format = 'png')
+		figure.savefig(fname = DESTINATION_FOLDER+"/"+str(date)+" - "+str(cont)+".png", format = 'png')
 		cont += 1
 	
 def main():
