@@ -4,6 +4,7 @@ import numpy as np
 import csv
 import ctypes # to get screen size
 from datetime import date # to get today as 'YYYY-MM-DD'
+import os
 
 # set SHOW_CHARTS_ENABLED = 1 to show all the charts
 SHOW_CHARTS_ENABLED = 0
@@ -147,12 +148,20 @@ def plot3Data(list, indice_colonna1, indice_colonna2, indice_colonna3, xlabel, y
 	#autolabel(rect3, ax)
 	return fig
 	
+def	create_destination_folder(folder_name):
+	# create destination folder to save figures
+	try:
+		os.mkdir(DESTINATION_FOLDER+"/"+folder_name)
+	except FileExistsError:
+		print("La cartella", DESTINATION_FOLDER+"/"+folder_name,"esiste già")
+		
 def saveFigures(date, figures):
+	create_destination_folder(folder_name = date)
 	cont = 0
 	for figure in figures:
 		figManager = plt.get_current_fig_manager()
 		figManager.full_screen_toggle()
-		figure.savefig(fname = DESTINATION_FOLDER+"/"+str(date)+" - "+str(cont)+".png", format = 'png')
+		figure.savefig(fname = DESTINATION_FOLDER+"/"+str(date)+"/"+str(date)+" - "+str(cont)+".png", format = 'png')
 		cont += 1
 	
 def main():
@@ -175,7 +184,7 @@ def main():
 	figures.append(plot3Data(anagrafica_vaccini, indice_colonna1 = INDICE_COLONNA_CATEGORIA_OPERATORI_SANITARI_SOCIOSANITARI, indice_colonna2 = INDICE_COLONNA_CATEGORIA_PERSONALE_NON_SANITARIO, indice_colonna3 = INDICE_COLONNA_CATEGORIA_OSPITI_RSA, xlabel = 'Fascia anagrafica', ylabel = 'Totale vaccinazioni', legenda1 = 'Operatori sanitari sociosanitari', legenda2 = 'Personale non sanitario', legenda3 = 'Ospiti RSA'))
 	if SAVING_CHARTS_ENABLED:
 		saveFigures(today, figures)
-		print ("Sono stati salvati", len(figures), "grafici nella cartella", DESTINATION_FOLDER)
+		print ("Sono stati salvati", len(figures), "grafici nella cartella", DESTINATION_FOLDER+"/"+today)
 	if SHOW_CHARTS_ENABLED:
 		plt.show()
 	
