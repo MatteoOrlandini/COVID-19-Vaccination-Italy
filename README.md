@@ -41,4 +41,4 @@ Total vaccinations by age group and gender
 ![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-01-20/2021-01-20%20-%204.png)
 
 Total vaccinations for social health workers, non-health personnel, guests of residential care homes
-![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-01-14%20-%205.png)
+![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-01-20/2021-01-20%20-%205.png)
