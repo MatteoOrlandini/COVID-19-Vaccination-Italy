@@ -80,4 +80,4 @@ Total vaccinations for social health workers, non-health personnel and guests of
 ![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-04-02/2021-04-02%20-%2017.png)
 
 Total vaccinations for other people, armed forces and school personnel
-![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-04-02/2021-04-02%20-%2018.png)1
+![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-04-02/2021-04-02%20-%2018.png)
