@@ -15,19 +15,6 @@ SAVING_CHARTS_ENABLED = 1
 # the folder that contains the saved charts
 DESTINATION_FOLDER = "Charts"
 
-# constant for vaccini-summary-latest.csv
-INDICE_COLONNA_DOSI_SOMMINISTATE = 1
-INDICE_COLONNA_DOSI_CONSEGNATE = 2
-INDICE_COLONNA_PERCENTUALE_SOMMINISTRAZIONI = 3
-
-# constant for anagrafica-vaccini-summary-latest.csv
-INDICE_COLONNA_TOTALE_VACCINAZIONI_FASCIA_ANAGRAFICA = 1
-INDICE_COLONNA_VACCINAZIONI_MASCHI = 2
-INDICE_COLONNA_VACCINAZIONI_FEMMINE = 3
-INDICE_COLONNA_CATEGORIA_OPERATORI_SANITARI_SOCIOSANITARI = 4
-INDICE_COLONNA_CATEGORIA_PERSONALE_NON_SANITARIO = 5
-INDICE_COLONNA_CATEGORIA_OSPITI_RSA = 6
-
 def download(fileName, url):	
 	print('Downloading CSV dataset from '+url)
 	urllib.request.urlretrieve(url, fileName)
@@ -42,7 +29,7 @@ def csvReader(fileName):
 			if line_count == 0:
 				# join all items in a tuple into a string, using a ", " character as separator:
 				column_names = ", ".join(row)
-				columns = column_names.split(", ")
+				metadata = column_names.split(", ")
 				#print(f'Column names are {", ".join(row)}')
 				line_count += 1
 				list.append(row)
@@ -51,12 +38,12 @@ def csvReader(fileName):
 				list.append(row)
 				line_count += 1
 		#print(f'Processed {line_count} lines.')
-		return list, columns
+		return list, metadata
 	
-def sumData(list, column, dataType):
+def sumData(list, metadata, dataType):
 	total = 0
-	for i in range (0, len (column)-1):
-		if (column[i] == dataType):
+	for i in range (0, len (metadata)-1):
+		if (metadata[i] == dataType):
 			index = i
 	for i in range (1, len (list)):
 		total += int(list[i][index])
@@ -68,7 +55,7 @@ def  getScreenSize():
 	return screensize
 
 def autolabel(rects, ax):
-    """Attach a text label above each bar in *rects*, displaying its height."""
+    # Attach a text label above each bar in *rects*, displaying its height.
     for rect in rects:
         height = rect.get_height()
         ax.annotate('{}'.format(height),
@@ -77,114 +64,152 @@ def autolabel(rects, ax):
                     textcoords="offset points",
                     ha='center', va='bottom')
 
-def plotData(list, indice_colonna, xlabel, ylabel):
-	xdata = []
-	ydata = []
+def fill_list_with_string(list, column_index):
+	data = []
 	for i in range (1, len (list)):
-		xdata.append(list[i][0])
-	for i in range (1, len (list)):
-		ydata.append(float(list[i][indice_colonna]))
-	screenSize = getScreenSize()
-	fig = plt.figure(figsize = [screenSize[0]/100, screenSize[1]/100])
-	plt.bar(xdata, ydata)
-	plt.xlabel(xlabel)
-	plt.ylabel(ylabel)
-	return fig
+		data.append(list[i][column_index])
+	return data
 	
-def plot2Data(list, indice_colonna1, indice_colonna2, xlabel, ylabel, legenda1, legenda2):
-	xdata = []
-	ydata1 = []
-	ydata2 = []
+def fill_list_with_column_data(list, column_index):
+	data = []
 	for i in range (1, len (list)):
-		xdata.append(list[i][0])
-	for i in range (1, len (list)):
-		ydata1.append(float(list[i][indice_colonna1]))
-	for i in range (1, len (list)):
-		ydata2.append(float(list[i][indice_colonna2]))
+		try:
+			data.append(float(list[i][column_index]))
+		except ValueError as e:
+			#print(e)
+			return None
+	return data
 		
-	larghezza = 0.35  # larghezza delle barre
-	screenSize = getScreenSize()
-	fig = plt.figure(figsize = [screenSize[0]/100, screenSize[1]/100])
-	ax = plt.subplot()
-	rect1 = ax.bar(np.arange(len(xdata)) - larghezza/2, ydata1, larghezza, label = legenda1)
-	rect2 = ax.bar(np.arange(len(xdata)) + larghezza/2, ydata2, larghezza, label = legenda2)
-	ax.set_xlabel(xlabel)
-	ax.set_ylabel(ylabel)
-	ax.set_xticks(np.arange(len(xdata)))
-	ax.set_xticklabels(xdata)
-	ax.legend()
-	#autolabel(rect1, ax)
-	#autolabel(rect2, ax)
-	return fig
+def get_index_from_column_name(metadata, column_name):
+	for i in range (1, len(metadata)):
+		if (metadata[i] == column_name):
+			return i
+
+def plotData(list, column_index):
+	xdata = fill_list_with_string(list, 0)
+	ydata = fill_list_with_column_data(list, column_index)
+	if (ydata == None):
+		return None
+	else:
+		# get screen size to plot graphs full screen
+		screenSize = getScreenSize()
+		fig = plt.figure(figsize = [screenSize[0]/100, screenSize[1]/100])
+		plt.bar(xdata, ydata)
+		plt.xlabel(list[0][0])
+		plt.ylabel(list[0][column_index])
+		return fig
 	
-def plot3Data(list, indice_colonna1, indice_colonna2, indice_colonna3, xlabel, ylabel, legenda1, legenda2, legenda3):
-	xdata = []
-	ydata1 = []
-	ydata2 = []
-	ydata3 = []
-	for i in range (1, len (list)):
-		xdata.append(list[i][0])
-	for i in range (1, len (list)):
-		ydata1.append(float(list[i][indice_colonna1]))
-	for i in range (1, len (list)):
-		ydata2.append(float(list[i][indice_colonna2]))
-	for i in range (1, len (list)):
-		ydata3.append(float(list[i][indice_colonna3]))
+def plot2Data(list, metadata, column1_name, column2_name):
+	xdata = fill_list_with_string(list, 0)
 		
-	larghezza = 0.25  # larghezza delle barre
-	screenSize = getScreenSize()
-	fig = plt.figure(figsize = [screenSize[0]/100, screenSize[1]/100])
-	ax = plt.subplot()
-	rect1 = ax.bar(np.arange(len(xdata)) - larghezza, ydata1, larghezza, label = legenda1)
-	rect2 = ax.bar(np.arange(len(xdata)), ydata2, larghezza, label = legenda2)
-	rect3 = ax.bar(np.arange(len(xdata)) + larghezza, ydata3, larghezza, label = legenda3)
-	ax.set_xlabel(xlabel)
-	ax.set_ylabel(ylabel)
-	ax.set_xticks(np.arange(len(xdata)))
-	ax.set_xticklabels(xdata)
-	ax.legend()
-	#autolabel(rect1, ax)
-	#autolabel(rect2, ax)
-	#autolabel(rect3, ax)
-	return fig
+	column1_index = get_index_from_column_name(metadata, column1_name)
+	column2_index = get_index_from_column_name(metadata, column2_name)		
+	
+	ydata1 = fill_list_with_column_data(list, column1_index)
+	ydata2 = fill_list_with_column_data(list, column2_index)
+	
+	if (ydata1 == None or ydata2 == None):
+		return None
+	else:
+		bar_width = 0.35  # width of the bar
+		screenSize = getScreenSize()
+		fig = plt.figure(figsize = [screenSize[0]/100, screenSize[1]/100])
+		ax = plt.subplot()
+		rect1 = ax.bar(np.arange(len(xdata)) - bar_width/2, ydata1, bar_width, label = column1_name)
+		rect2 = ax.bar(np.arange(len(xdata)) + bar_width/2, ydata2, bar_width, label = column2_name)
+		ax.set_xlabel(list[0][0])
+		ax.set_ylabel(column1_name + ", " + column2_name)
+		ax.set_xticks(np.arange(len(xdata)))
+		ax.set_xticklabels(xdata)
+		ax.legend()
+		#autolabel(rect1, ax)
+		#autolabel(rect2, ax)
+		return fig
+	
+def plot3Data(list, metadata, column1_name, column2_name, column3_name):
+	xdata = fill_list_with_string(list, 0)
+		
+	column1_index = get_index_from_column_name(metadata, column1_name)
+	column2_index = get_index_from_column_name(metadata, column2_name)		
+	column3_index = get_index_from_column_name(metadata, column3_name)		
+	
+	ydata1 = fill_list_with_column_data(list, column1_index)
+	ydata2 = fill_list_with_column_data(list, column2_index)
+	ydata3 = fill_list_with_column_data(list, column3_index)
+	
+	if (ydata1 == None or ydata2 == None or ydata3 == None):
+		return None
+	else:
+		bar_width = 0.25  # width of the bar
+		screenSize = getScreenSize()
+		fig = plt.figure(figsize = [screenSize[0]/100, screenSize[1]/100])
+		ax = plt.subplot()
+		rect1 = ax.bar(np.arange(len(xdata)) - bar_width, ydata1, bar_width, label = column1_name)
+		rect2 = ax.bar(np.arange(len(xdata)), ydata2, bar_width, label = column2_name)
+		rect3 = ax.bar(np.arange(len(xdata)) + bar_width, ydata3, bar_width, label = column3_name)
+		ax.set_xlabel(list[0][0])
+		ax.set_ylabel(column1_name + ", " + column2_name + ", " + column3_name)
+		ax.set_xticks(np.arange(len(xdata)))
+		ax.set_xticklabels(xdata)
+		ax.legend()
+		#autolabel(rect1, ax)
+		#autolabel(rect2, ax)
+		#autolabel(rect3, ax)
+		return fig
 	
 def	create_destination_folder(folder_name):
 	# create destination folder to save figures
 	try:
 		os.mkdir(DESTINATION_FOLDER+"/"+folder_name)
 	except FileExistsError:
-		print("La cartella", DESTINATION_FOLDER+"/"+folder_name,"esiste già")
+		print("Folder", DESTINATION_FOLDER+"/"+folder_name,"already exists")
 		
-def saveFigures(date, figures):
-	create_destination_folder(folder_name = date)
-	cont = 0
-	for figure in figures:
+def saveFigure(date, figure, count):
+	if (figure != None and SAVING_CHARTS_ENABLED):
 		figManager = plt.get_current_fig_manager()
 		figManager.full_screen_toggle()
-		figure.savefig(fname = DESTINATION_FOLDER+"/"+str(date)+"/"+str(date)+" - "+str(cont)+".png", format = 'png')
-		cont += 1
+		figure.savefig(fname = DESTINATION_FOLDER+"/"+str(date)+"/"+str(date)+" - "+str(count)+".png", format = 'png')
+		count += 1
+	return count
 	
 def main():
-	today = str(date.today())
 	download(fileName = 'vaccini-summary-latest.csv', url = 'https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/vaccini-summary-latest.csv')
 	download(fileName = 'somministrazioni-vaccini-latest.csv', url = 'https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/somministrazioni-vaccini-latest.csv')
 	download(fileName = 'anagrafica-vaccini-summary-latest.csv', url = 'https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/anagrafica-vaccini-summary-latest.csv')
-	vaccini_summary_latest, colonne_vaccini_summary_latest = csvReader('vaccini-summary-latest.csv')
-	totalData = sumData(vaccini_summary_latest, colonne_vaccini_summary_latest, dataType = 'dosi_somministrate')
-	print ('Il totale delle dosi somministrate al', today, 'è:', totalData)
-	totalData = sumData(vaccini_summary_latest, colonne_vaccini_summary_latest, dataType = 'dosi_consegnate')
-	print ('Il totale delle dosi consegnate al', today, 'è:', totalData)
-	figures = []
-	figures.append(plotData(vaccini_summary_latest, indice_colonna = INDICE_COLONNA_DOSI_SOMMINISTATE, xlabel = 'Regioni', ylabel = 'Dosi somministrate'))
-	figures.append(plotData(vaccini_summary_latest, indice_colonna = INDICE_COLONNA_DOSI_CONSEGNATE, xlabel = 'Regioni', ylabel = 'Dosi consegnate'))
-	figures.append(plotData(vaccini_summary_latest, indice_colonna = INDICE_COLONNA_PERCENTUALE_SOMMINISTRAZIONI, xlabel = 'Regioni', ylabel = 'Percentuale somministrazioni'))
-	anagrafica_vaccini, colonne_anagrafica_vaccini = csvReader('anagrafica-vaccini-summary-latest.csv')
-	figures.append(plotData(anagrafica_vaccini, indice_colonna = INDICE_COLONNA_TOTALE_VACCINAZIONI_FASCIA_ANAGRAFICA, xlabel = 'Fascia anagrafica', ylabel = 'Totale vaccinazioni'))
-	figures.append(plot2Data(anagrafica_vaccini, indice_colonna1 = INDICE_COLONNA_VACCINAZIONI_MASCHI, indice_colonna2 = INDICE_COLONNA_VACCINAZIONI_FEMMINE, xlabel = 'Fascia anagrafica', ylabel = 'Totale vaccinazioni', legenda1 = 'Sesso maschile', legenda2 = 'Sesso femminile'))
-	figures.append(plot3Data(anagrafica_vaccini, indice_colonna1 = INDICE_COLONNA_CATEGORIA_OPERATORI_SANITARI_SOCIOSANITARI, indice_colonna2 = INDICE_COLONNA_CATEGORIA_PERSONALE_NON_SANITARIO, indice_colonna3 = INDICE_COLONNA_CATEGORIA_OSPITI_RSA, xlabel = 'Fascia anagrafica', ylabel = 'Totale vaccinazioni', legenda1 = 'Operatori sanitari sociosanitari', legenda2 = 'Personale non sanitario', legenda3 = 'Ospiti RSA'))
+	
+	# read vaccini-summary-latest.csv
+	vaccini_summary_latest, metadata_vaccini_summary_latest = csvReader('vaccini-summary-latest.csv')	
+	totalData = sumData(vaccini_summary_latest, metadata_vaccini_summary_latest, dataType = 'dosi_somministrate')
+	print ('Total doses administered:', totalData)
+	totalData = sumData(vaccini_summary_latest, metadata_vaccini_summary_latest, dataType = 'dosi_consegnate')
+	print ('Total doses delivered:', totalData)
+	
+	create_destination_folder(folder_name = str(date.today()))
+	count = 0
+	
+	for i in range (1, len(metadata_vaccini_summary_latest)):
+		if (metadata_vaccini_summary_latest[i] != "codice_regione_ISTAT"):
+			figure = plotData(vaccini_summary_latest, column_index = i)
+			count = saveFigure(str(date.today()), figure, count)
+			
+	# read anagrafica-vaccini-summary-latest.csv
+	anagrafica_vaccini, metadata_anagrafica_vaccini = csvReader('anagrafica-vaccini-summary-latest.csv')
+	for i in range (1, len(metadata_anagrafica_vaccini)):
+		figure = (plotData(anagrafica_vaccini, column_index = i))
+		count = saveFigure(str(date.today()), figure, count)
+			
+	figure = plot2Data(anagrafica_vaccini, metadata_anagrafica_vaccini, column1_name = 'sesso_maschile', column2_name = 'sesso_femminile')
+	count = saveFigure(str(date.today()), figure, count)
+	figure = plot2Data(anagrafica_vaccini, metadata_anagrafica_vaccini, column1_name = 'prima_dose', column2_name = 'seconda_dose')
+	count = saveFigure(str(date.today()), figure, count)
+	
+	figure = plot3Data(anagrafica_vaccini, metadata_anagrafica_vaccini, column1_name = 'categoria_operatori_sanitari_sociosanitari', column2_name = 'categoria_personale_non_sanitario', column3_name = 'categoria_ospiti_rsa')
+	count = saveFigure(str(date.today()), figure, count)
+	figure = plot3Data(anagrafica_vaccini, metadata_anagrafica_vaccini, column1_name = 'categoria_altro', column2_name = 'categoria_forze_armate', column3_name = 'categoria_personale_scolastico')
+	count = saveFigure(str(date.today()), figure, count)
+	
 	if SAVING_CHARTS_ENABLED:
-		saveFigures(today, figures)
-		print ("Sono stati salvati", len(figures), "grafici nella cartella", DESTINATION_FOLDER+"/"+today)
+		print (count, "graphs saved in", DESTINATION_FOLDER+"/"+str(date.today()))
 	if SHOW_CHARTS_ENABLED:
 		plt.show()
 	
