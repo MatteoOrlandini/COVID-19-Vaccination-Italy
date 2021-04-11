@@ -1,0 +1,30 @@
+Doses administered for each region
+Doses delivered for each region
+Percentage of administration for each region
+Total vaccinations by age group
+Total vaccinations by age group and male gender
+Total vaccinations by age group and female gender
+Total vaccinations for social health workers
+Total vaccinations for social non-health personnel
+Total vaccinations for other people
+Total vaccinations for guests of residential care homes
+Total vaccinations for over 80 years old
+Total vaccinations for armed forces
+Total vaccinations for school personnel
+Total first dose vaccinations
+Total second dose vaccinations
+Comparison between male and female vaccinations
+Comparison between first and second doses
+Total vaccinations for social health workers, non-health personnel and guests of residential care homes
+Total vaccinations for other people, armed forces and school personnel
+Total administered doses over time
+Daily administered doses over time
+Total administered doses for 20-29 years old age group over time
+Total administered doses for 30-39 years old age group over time
+Total administered doses for 40-49 years old age group over time
+Total administered doses for 50-59 years old age group over time
+Total administered doses for 60-69 years old age group over time
+Total administered doses for 70-79 years old age group over time
+Total administered doses for 80-89 years old age group over time
+Total administered doses for 90+ years old age group over time
+Total administered doses for 16-19 years old age group over time
