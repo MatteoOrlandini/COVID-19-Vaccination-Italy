@@ -6,6 +6,8 @@ import ctypes # to get screen size
 from datetime import date # to get today as 'YYYY-MM-DD'
 import os
 import readme_autoupdate
+import tweepy as tw
+import twitter
 
 # set SHOW_CHARTS_ENABLED = 1 to show all the charts
 SHOW_CHARTS_ENABLED = 0
@@ -275,7 +277,10 @@ def plotLine1Data(data, xlimits, xlabel, ylabel):
 	plt.xlabel(xlabel)
 	plt.ylabel(ylabel)
 	plt.xticks([0, len(data)], xlimits)
-	plt.text(x = len(data) - 5, y = data[len(data) - 1] + 0.015*data[len(data) - 1], s = str(int(data[len(data) - 1])))
+	plt.text(x = len(data) - 1, y = data[len(data) - 1], s = str(int(data[len(data) - 1])), horizontalalignment = 'center', verticalalignment = 'bottom')
+	if (max(data) != data[len(data) - 1]):
+		plt.text(x = data.index(max(data)), y = max(data), s = "MAX: "+str(int(data[data.index(max(data))])),\
+		horizontalalignment = 'center', verticalalignment = 'bottom')
 	return fig
 	
 def	create_destination_folder(folder_name):
@@ -299,15 +304,15 @@ def main():
 	download(fileName = 'somministrazioni-vaccini-latest.csv', url = 'https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/somministrazioni-vaccini-latest.csv')
 	download(fileName = 'anagrafica-vaccini-summary-latest.csv', url = 'https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/anagrafica-vaccini-summary-latest.csv')
 	
-	# read vaccini-summary-latest.csv
-	vaccini_summary_latest, metadata_vaccini_summary_latest = csvReader('vaccini-summary-latest.csv')	
-	totalData = sumData(vaccini_summary_latest, metadata_vaccini_summary_latest, dataType = 'dosi_somministrate')
-	print ('Total doses administered:', totalData)
-	totalData = sumData(vaccini_summary_latest, metadata_vaccini_summary_latest, dataType = 'dosi_consegnate')
-	print ('Total doses delivered:', totalData)
-	
 	create_destination_folder(folder_name = str(date.today()))
 	count = 0
+	
+	# read vaccini-summary-latest.csv
+	vaccini_summary_latest, metadata_vaccini_summary_latest = csvReader('vaccini-summary-latest.csv')	
+	total_doses_administered = sumData(vaccini_summary_latest, metadata_vaccini_summary_latest, dataType = 'dosi_somministrate')
+	print ('Total doses administered:', total_doses_administered)
+	total_doses_delivered = sumData(vaccini_summary_latest, metadata_vaccini_summary_latest, dataType = 'dosi_consegnate')
+	print ('Total doses delivered:', total_doses_delivered)
 	
 	for i in range (1, len(metadata_vaccini_summary_latest)):
 		if (metadata_vaccini_summary_latest[i] != "codice_regione_ISTAT"):	
@@ -368,6 +373,10 @@ def main():
 	if (daily_data_italy[len(daily_data_italy)-1] != 0):
 		figure = plotLine1Data(data = daily_data_italy, xlimits = [first_date, last_date], xlabel = 'Days', ylabel = "Dosi somministrate quotidianamente")
 		count = saveFigure(str(date.today()), figure, count)
+		
+	doses_administered_today = daily_data_italy[len(daily_data_italy)-1]
+	print("Doses administered today ("+somministrazioni_vaccini[len(somministrazioni_vaccini)-1][get_index_from_column_name(metadata_somministrazioni_vaccini, "data_somministrazione")]+"): "\
+	+str(int(doses_administered_today)))
 	
 	for i in range (0, len(fascia_anagrafica)):
 		cumulative_data_italy_by_age_group, first_date, last_date = get_cumulative_data_italy_by_age_group(somministrazioni_vaccini, metadata_somministrazioni_vaccini, fascia_anagrafica[i])
@@ -414,6 +423,9 @@ def main():
 		
 	if (readme_autoupdate.create_readme() == True):
 		print("README.md updated")
+		
+	if (twitter.post_tweet(total_doses_administered, total_doses_delivered, doses_administered_today) == True):
+		print("Your tweet has been posted!")
 	
 if __name__ == "__main__":
     main()
