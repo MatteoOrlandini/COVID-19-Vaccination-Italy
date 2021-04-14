@@ -3,10 +3,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import csv
 import ctypes # to get screen size
-from datetime import date # to get today as 'YYYY-MM-DD'
 import os
 import readme_autoupdate
-import tweepy as tw
 import twitter
 
 # set SHOW_CHARTS_ENABLED = 1 to show all the charts
@@ -23,7 +21,7 @@ def download(fileName, url):
 	urllib.request.urlretrieve(url, fileName)
 	print('CSV dataset \"'+fileName+'\" downloaded')
 
-def csvReader(fileName):	
+def csv_reader(fileName):	
 	with open(fileName, mode='r') as csv_file:
 		csv_reader = csv.reader(csv_file, delimiter = ',')
 		line_count = 0
@@ -43,7 +41,7 @@ def csvReader(fileName):
 		#print(f'Processed {line_count} lines.')
 		return list, metadata
 	
-def sumData(list, metadata, dataType):
+def sum_data(list, metadata, dataType):
 	total = 0
 	for i in range (0, len (metadata)):
 		if (metadata[i] == dataType):
@@ -52,7 +50,7 @@ def sumData(list, metadata, dataType):
 		total += int(list[i][index])
 	return total
 
-def getScreenSize():
+def get_screen_size():
 	user32 = ctypes.windll.user32
 	screensize = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
 	return screensize
@@ -218,24 +216,24 @@ def get_index_from_column_name(metadata, column_name):
 		if (metadata[i] == column_name):
 			return i
 
-def plotBar1Data(xlabel, ylabel, xdata, ydata):
+def plot_bar_1data(xlabel, ylabel, xdata, ydata):
 	if (ydata == None):
 		return None
 	else:
 		# get screen size to plot graphs full screen
-		screenSize = getScreenSize()
+		screenSize = get_screen_size()
 		fig = plt.figure(figsize = [screenSize[0]/100, screenSize[1]/100])
 		plt.bar(xdata, ydata)
 		plt.xlabel(xlabel)
 		plt.ylabel(ylabel)
 		return fig
 	
-def plotBar2Data(xlabel, ylabel1, ylabel2, xdata, ydata1, ydata2):
+def plot_bar_2data(xlabel, ylabel1, ylabel2, xdata, ydata1, ydata2):
 	if (ydata1 == None or ydata2 == None):
 		return None
 	else:
 		bar_width = 0.35  # width of the bar
-		screenSize = getScreenSize()
+		screenSize = get_screen_size()
 		fig = plt.figure(figsize = [screenSize[0]/100, screenSize[1]/100])
 		ax = plt.subplot()
 		rect1 = ax.bar(np.arange(len(xdata)) - bar_width/2, ydata1, bar_width, label = ylabel1)
@@ -249,12 +247,12 @@ def plotBar2Data(xlabel, ylabel1, ylabel2, xdata, ydata1, ydata2):
 		#autolabel(rect2, ax)
 		return fig
 	
-def plotBar3Data(xlabel, ylabel1, ylabel2, ylabel3, xdata, ydata1, ydata2, ydata3):
+def plot_bar_3data(xlabel, ylabel1, ylabel2, ylabel3, xdata, ydata1, ydata2, ydata3):
 	if (ydata1 == None or ydata2 == None or ydata3 == None):
 		return None
 	else:
 		bar_width = 0.25  # width of the bar
-		screenSize = getScreenSize()
+		screenSize = get_screen_size()
 		fig = plt.figure(figsize = [screenSize[0]/100, screenSize[1]/100])
 		ax = plt.subplot()
 		rect1 = ax.bar(np.arange(len(xdata)) - bar_width, ydata1, bar_width, label = ylabel1)
@@ -270,8 +268,8 @@ def plotBar3Data(xlabel, ylabel1, ylabel2, ylabel3, xdata, ydata1, ydata2, ydata
 		#autolabel(rect3, ax)
 		return fig
 		
-def plotLine1Data(data, xlimits, xlabel, ylabel):
-	screenSize = getScreenSize()
+def plot_line_1data(data, xlimits, xlabel, ylabel):
+	screenSize = get_screen_size()
 	fig = plt.figure(figsize = [screenSize[0]/100, screenSize[1]/100])
 	plt.plot(data)
 	plt.xlabel(xlabel)
@@ -286,15 +284,15 @@ def plotLine1Data(data, xlimits, xlabel, ylabel):
 def	create_destination_folder(folder_name):
 	# create destination folder to save figures
 	try:
-		os.mkdir(DESTINATION_FOLDER+"/"+folder_name)
+		os.mkdir(folder_name)
 	except FileExistsError:
-		print("Folder", DESTINATION_FOLDER+"/"+folder_name,"already exists")
+		print("Folder " + folder_name + " already exists")
 		
-def saveFigure(date, figure, count):
+def save_figure(figure_name, figure, count):
 	if (figure != None and SAVING_CHARTS_ENABLED):
 		figManager = plt.get_current_fig_manager()
 		figManager.full_screen_toggle()
-		figure.savefig(fname = DESTINATION_FOLDER+"/"+str(date)+"/"+str(date)+" - "+str(count)+".png", format = 'png')
+		figure.savefig(fname = figure_name, format = 'png')
 		count += 1
 	plt.close(figure)
 	return count
@@ -304,60 +302,68 @@ def main():
 	download(fileName = 'somministrazioni-vaccini-latest.csv', url = 'https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/somministrazioni-vaccini-latest.csv')
 	download(fileName = 'anagrafica-vaccini-summary-latest.csv', url = 'https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/anagrafica-vaccini-summary-latest.csv')
 	
-	create_destination_folder(folder_name = str(date.today()))
-	count = 0
-	
 	# read vaccini-summary-latest.csv
-	vaccini_summary_latest, metadata_vaccini_summary_latest = csvReader('vaccini-summary-latest.csv')	
-	total_doses_administered = sumData(vaccini_summary_latest, metadata_vaccini_summary_latest, dataType = 'dosi_somministrate')
+	vaccini_summary_latest, metadata_vaccini_summary_latest = csv_reader('vaccini-summary-latest.csv')	
+	
+	latest_update = vaccini_summary_latest[len(vaccini_summary_latest) - 1][get_index_from_column_name(metadata_vaccini_summary_latest, "ultimo_aggiornamento")]
+	create_destination_folder(folder_name = DESTINATION_FOLDER + "/" + latest_update)
+	
+	total_doses_administered = sum_data(vaccini_summary_latest, metadata_vaccini_summary_latest, dataType = 'dosi_somministrate')	
 	print ('Total doses administered:', total_doses_administered)
-	total_doses_delivered = sumData(vaccini_summary_latest, metadata_vaccini_summary_latest, dataType = 'dosi_consegnate')
+	total_doses_delivered = sum_data(vaccini_summary_latest, metadata_vaccini_summary_latest, dataType = 'dosi_consegnate')
 	print ('Total doses delivered:', total_doses_delivered)
 	
+	count = 0
 	for i in range (1, len(metadata_vaccini_summary_latest)):
 		if (metadata_vaccini_summary_latest[i] != "codice_regione_ISTAT"):	
 			xdata = get_string_list(vaccini_summary_latest, get_index_from_column_name(metadata_vaccini_summary_latest, "area"))
 			ydata = get_data_list(vaccini_summary_latest, i)
-			figure = plotBar1Data('area', metadata_vaccini_summary_latest[i], xdata, ydata)
-			count = saveFigure(str(date.today()), figure, count)
+			figure = plot_bar_1data('area', metadata_vaccini_summary_latest[i], xdata, ydata)
+			count = save_figure(DESTINATION_FOLDER+"/"+latest_update+"/"+latest_update+" - "+str(count)+".png", figure, count)
 			
 	# read anagrafica-vaccini-summary-latest.csv
-	anagrafica_vaccini, metadata_anagrafica_vaccini = csvReader('anagrafica-vaccini-summary-latest.csv')
+	anagrafica_vaccini, metadata_anagrafica_vaccini = csv_reader('anagrafica-vaccini-summary-latest.csv')
+	
+	latest_update = anagrafica_vaccini[len(anagrafica_vaccini) - 1][get_index_from_column_name(metadata_anagrafica_vaccini, "ultimo_aggiornamento")]
+	create_destination_folder(folder_name = DESTINATION_FOLDER + "/" + latest_update)
+	
 	for i in range (1, len(metadata_anagrafica_vaccini)):
 		xdata = get_string_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, "fascia_anagrafica"))
 		ydata = get_data_list(anagrafica_vaccini, i)
-		figure = (plotBar1Data('fascia_anagrafica', metadata_anagrafica_vaccini[i], xdata, ydata))
-		count = saveFigure(str(date.today()), figure, count)
+		figure = (plot_bar_1data('fascia_anagrafica', metadata_anagrafica_vaccini[i], xdata, ydata))
+		count = save_figure(DESTINATION_FOLDER+"/"+latest_update+"/"+latest_update+" - "+str(count)+".png", figure, count)
 			
-	
 	xdata = get_string_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'fascia_anagrafica'))	
 	ydata1 = get_data_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'sesso_maschile'))
 	ydata2 = get_data_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'sesso_femminile'))
-	figure = plotBar2Data('fascia_anagrafica', 'sesso_maschile', 'sesso_femminile', xdata, ydata1, ydata2)
-	count = saveFigure(str(date.today()), figure, count)
+	figure = plot_bar_2data('fascia_anagrafica', 'sesso_maschile', 'sesso_femminile', xdata, ydata1, ydata2)
+	count = save_figure(DESTINATION_FOLDER+"/"+latest_update+"/"+latest_update+" - "+str(count)+".png", figure, count)
 	
 	xdata = get_string_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'fascia_anagrafica'))	
 	ydata1 = get_data_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'prima_dose'))
 	ydata2 = get_data_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'seconda_dose'))
-	figure = plotBar2Data('fascia_anagrafica', 'prima_dose', 'seconda_dose', xdata, ydata1, ydata2)
-	count = saveFigure(str(date.today()), figure, count)
+	figure = plot_bar_2data('fascia_anagrafica', 'prima_dose', 'seconda_dose', xdata, ydata1, ydata2)
+	count = save_figure(DESTINATION_FOLDER+"/"+latest_update+"/"+latest_update+" - "+str(count)+".png", figure, count)
 	
 	xdata = get_string_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'fascia_anagrafica'))	
 	ydata1 = get_data_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'categoria_operatori_sanitari_sociosanitari'))
 	ydata2 = get_data_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'categoria_personale_non_sanitario'))
 	ydata3 = get_data_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'categoria_ospiti_rsa'))
-	figure = plotBar3Data('fascia_anagrafica', 'categoria_operatori_sanitari_sociosanitari', 'categoria_personale_non_sanitario', 'categoria_ospiti_rsa', xdata, ydata1, ydata2, ydata3)
-	count = saveFigure(str(date.today()), figure, count)
+	figure = plot_bar_3data('fascia_anagrafica', 'categoria_operatori_sanitari_sociosanitari', 'categoria_personale_non_sanitario', 'categoria_ospiti_rsa', xdata, ydata1, ydata2, ydata3)
+	count = save_figure(DESTINATION_FOLDER+"/"+latest_update+"/"+latest_update+" - "+str(count)+".png", figure, count)
 	
 	xdata = get_string_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'fascia_anagrafica'))	
 	ydata1 = get_data_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'categoria_altro'))
 	ydata2 = get_data_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'categoria_forze_armate'))
 	ydata3 = get_data_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'categoria_personale_scolastico'))
-	figure = plotBar3Data('fascia_anagrafica', 'categoria_altro', 'categoria_forze_armate', 'categoria_personale_scolastico', xdata, ydata1, ydata2, ydata3)
-	count = saveFigure(str(date.today()), figure, count)
+	figure = plot_bar_3data('fascia_anagrafica', 'categoria_altro', 'categoria_forze_armate', 'categoria_personale_scolastico', xdata, ydata1, ydata2, ydata3)
+	count = save_figure(DESTINATION_FOLDER+"/"+latest_update+"/"+latest_update+" - "+str(count)+".png", figure, count)
 	
 	# read somministrazioni-vaccini-latest.csv
-	somministrazioni_vaccini, metadata_somministrazioni_vaccini = csvReader('somministrazioni-vaccini-latest.csv')
+	somministrazioni_vaccini, metadata_somministrazioni_vaccini = csv_reader('somministrazioni-vaccini-latest.csv')
+	
+	latest_update = somministrazioni_vaccini[len(somministrazioni_vaccini) - 1][get_index_from_column_name(metadata_somministrazioni_vaccini, "data_somministrazione")]
+	create_destination_folder(folder_name = DESTINATION_FOLDER + "/" + latest_update)
 	
 	data_somministrazione = get_string_list(somministrazioni_vaccini, get_index_from_column_name(metadata = metadata_somministrazioni_vaccini, column_name = "data_somministrazione"))
 	fornitore = get_string_list(somministrazioni_vaccini, get_index_from_column_name(metadata = metadata_somministrazioni_vaccini, column_name = "fornitore"))
@@ -366,23 +372,22 @@ def main():
 
 	cumulative_data_italy, first_date, last_date = get_cumulative_data_italy(somministrazioni_vaccini, metadata_somministrazioni_vaccini)
 	if (cumulative_data_italy[len(cumulative_data_italy)-1] != 0):
-		figure = plotLine1Data(data = cumulative_data_italy, xlimits = [first_date, last_date], xlabel = 'Days', ylabel = "Totale dosi somministrate")
-		count = saveFigure(str(date.today()), figure, count)
+		figure = plot_line_1data(data = cumulative_data_italy, xlimits = [first_date, last_date], xlabel = 'Days', ylabel = "Totale dosi somministrate")
+		count = save_figure(DESTINATION_FOLDER+"/"+latest_update+"/"+latest_update+" - "+str(count)+".png", figure, count)
 		
 	daily_data_italy, first_date, last_date = get_daily_data_italy(somministrazioni_vaccini, metadata_somministrazioni_vaccini)
 	if (daily_data_italy[len(daily_data_italy)-1] != 0):
-		figure = plotLine1Data(data = daily_data_italy, xlimits = [first_date, last_date], xlabel = 'Days', ylabel = "Dosi somministrate quotidianamente")
-		count = saveFigure(str(date.today()), figure, count)
+		figure = plot_line_1data(data = daily_data_italy, xlimits = [first_date, last_date], xlabel = 'Days', ylabel = "Dosi somministrate quotidianamente")
+		count = save_figure(DESTINATION_FOLDER+"/"+latest_update+"/"+latest_update+" - "+str(count)+".png", figure, count)
 		
-	doses_administered_today = daily_data_italy[len(daily_data_italy)-1]
-	print("Doses administered today ("+somministrazioni_vaccini[len(somministrazioni_vaccini)-1][get_index_from_column_name(metadata_somministrazioni_vaccini, "data_somministrazione")]+"): "\
-	+str(int(doses_administered_today)))
+	doses_administered_today = int(daily_data_italy[len(daily_data_italy)-1])
+	print("Doses administered today (" + latest_update+"): " + str(doses_administered_today))
 	
 	for i in range (0, len(fascia_anagrafica)):
 		cumulative_data_italy_by_age_group, first_date, last_date = get_cumulative_data_italy_by_age_group(somministrazioni_vaccini, metadata_somministrazioni_vaccini, fascia_anagrafica[i])
 		if (cumulative_data_italy_by_age_group[len(cumulative_data_italy_by_age_group)-1] != 0):
-			figure = plotLine1Data(data = cumulative_data_italy_by_age_group, xlimits = [first_date, last_date], xlabel = 'Days', ylabel = "Fascia anagrafica " + fascia_anagrafica[i])
-			count = saveFigure(str(date.today()), figure, count)
+			figure = plot_line_1data(data = cumulative_data_italy_by_age_group, xlimits = [first_date, last_date], xlabel = 'Days', ylabel = "Fascia anagrafica " + fascia_anagrafica[i])
+			count = save_figure(DESTINATION_FOLDER+"/"+latest_update+"/"+latest_update+" - "+str(count)+".png", figure, count)
 			
 	# for i in range (0, len(fascia_anagrafica)):
 		# for j in range (0, len(area)):
@@ -397,9 +402,9 @@ def main():
 					# and metadata_somministrazioni_vaccini[l] != "nome_area"):
 						# cumulative_data_per_area_by_category, first_date, last_date = get_cumulative_data_per_area_by_category(somministrazioni_vaccini, metadata_somministrazioni_vaccini, data_somministrazione, fascia_anagrafica[i], area[j], fornitore[k], metadata_somministrazioni_vaccini[l])
 						# if (cumulative_data_per_area_by_category[len(cumulative_data_per_area_by_category)-1] != 0):
-							# figure = plotLine1Data(data = cumulative_data_per_area_by_category, xlimits = [first_date, last_date], xlabel = 'Days', ylabel = fornitore[k] + " " + area[j] + " " + metadata_somministrazioni_vaccini[l] + " fascia anagrafica " + fascia_anagrafica[i])
-							# count = saveFigure(str(date.today()), figure, count)
-					
+							# figure = plot_line_1data(data = cumulative_data_per_area_by_category, xlimits = [first_date, last_date], xlabel = 'Days', ylabel = fornitore[k] + " " + area[j] + " " + metadata_somministrazioni_vaccini[l] + " fascia anagrafica " + fascia_anagrafica[i])
+							# count = save_figure(DESTINATION_FOLDER+"/"+latest_update+"/"+latest_update+" - "+str(count)+".png", figure, count)
+		
 	# for i in range (0, len(fascia_anagrafica)):
 		# for k in range (0, len(fornitore)):
 			# for l in range(1, len(metadata_somministrazioni_vaccini)):
@@ -413,19 +418,19 @@ def main():
 				# and metadata_somministrazioni_vaccini[l] != "nome_area"):
 					# cumulative_data_italy_by_category, first_date, last_date = get_cumulative_data_italy_by_category(somministrazioni_vaccini, metadata_somministrazioni_vaccini, data_somministrazione, fascia_anagrafica[i], fornitore[k], metadata_somministrazioni_vaccini[l])
 					# if (cumulative_data_italy_by_category[len(cumulative_data_italy_by_category)-1] != 0):
-						# figure = plotLine1Data(data = cumulative_data_italy_by_category, xlimits = [first_date, last_date], xlabel = 'Days', ylabel = fornitore[k] + " Italy " + metadata_somministrazioni_vaccini[l] + " fascia anagrafica " + fascia_anagrafica[i])
-						# count = saveFigure(str(date.today()), figure, count)
+						# figure = plot_line_1data(data = cumulative_data_italy_by_category, xlimits = [first_date, last_date], xlabel = 'Days', ylabel = fornitore[k] + " Italy " + metadata_somministrazioni_vaccini[l] + " fascia anagrafica " + fascia_anagrafica[i])
+						# count = save_figure(DESTINATION_FOLDER+"/"+latest_update+"/"+latest_update+" - "+str(count)+".png", figure, count)
 		
 	if SAVING_CHARTS_ENABLED:
-		print (count, "graphs saved in", DESTINATION_FOLDER+"/"+str(date.today()))
+		print (count, "charts saved.")
 	if SHOW_CHARTS_ENABLED:
 		plt.show()
 		
-	if (readme_autoupdate.create_readme() == True):
-		print("README.md updated")
+	if (readme_autoupdate.create_readme(latest_update) == True):
+		print("README.md updated.")
 		
-	if (twitter.post_tweet(total_doses_administered, total_doses_delivered, doses_administered_today) == True):
-		print("Your tweet has been posted!")
+	if (twitter.post_tweet(latest_update, total_doses_administered, total_doses_delivered, doses_administered_today) == True):
+		print("Your tweet has been posted.")
 	
 if __name__ == "__main__":
     main()
