@@ -4,6 +4,7 @@ import numpy as np
 import csv
 import ctypes # to get screen size
 import os
+import math
 import readme_autoupdate
 import twitter
 
@@ -81,19 +82,20 @@ def get_data_list(list, column_index):
 			#print(e)
 			return None
 	return data
-
+	
 def get_cumulative_data_italy(list, metadata):
 	data = []
-	day = list[1][get_index_from_column_name(metadata, "data_somministrazione")] # initialize day
-	j = 0
+	days = [] # initialize days
+	
 	for i in range(1, len(list)):
 		if (len(data) == 0):
 				data = [float(list[i][get_index_from_column_name(metadata, "sesso_maschile")])\
 				+ (float(list[i][get_index_from_column_name(metadata, "sesso_femminile")]))]
-				first_date = list[i][get_index_from_column_name(metadata, "data_somministrazione")]
-				last_date = first_date
+				
+				days.append(list[i][get_index_from_column_name(metadata, "data_somministrazione")]) #append first day to days
+			
 		else:
-			if (day == list[i][get_index_from_column_name(metadata, "data_somministrazione")]):
+			if (days[len(days) - 1] == list[i][get_index_from_column_name(metadata, "data_somministrazione")]):
 				data[len(data) - 1] += \
 				+ float(list[i][get_index_from_column_name(metadata, "sesso_maschile")])\
 				+ float(list[i][get_index_from_column_name(metadata, "sesso_femminile")])\
@@ -103,52 +105,29 @@ def get_cumulative_data_italy(list, metadata):
 				+ float(list[i][get_index_from_column_name(metadata, "sesso_maschile")])\
 				+ float(list[i][get_index_from_column_name(metadata, "sesso_femminile")]))
 				
-				last_date = list[i][get_index_from_column_name(metadata, "data_somministrazione")]
-				
-				day = list[i][get_index_from_column_name(metadata, "data_somministrazione")] #update day
+				days.append(list[i][get_index_from_column_name(metadata, "data_somministrazione")]) #append new day to days
 			
-	return data, first_date, last_date
+	return data, days
 	
-def	get_daily_data_italy(list, metadata):
-	data = []
-	day = list[1][get_index_from_column_name(metadata, "data_somministrazione")] # initialize day
-	j = 0
-	for i in range(1, len(list)):
-		if (len(data) == 0):
-				data = [float(list[i][get_index_from_column_name(metadata, "sesso_maschile")])\
-				+ (float(list[i][get_index_from_column_name(metadata, "sesso_femminile")]))]
-				first_date = list[i][get_index_from_column_name(metadata, "data_somministrazione")]
-				last_date = first_date
-		else:
-			if (day == list[i][get_index_from_column_name(metadata, "data_somministrazione")]):
-				data[len(data) - 1] += \
-				+ float(list[i][get_index_from_column_name(metadata, "sesso_maschile")])\
-				+ float(list[i][get_index_from_column_name(metadata, "sesso_femminile")])\
-				
-			else:
-				data.append(float(list[i][get_index_from_column_name(metadata, "sesso_maschile")])\
-				+ float(list[i][get_index_from_column_name(metadata, "sesso_femminile")]))
-				
-				last_date = list[i][get_index_from_column_name(metadata, "data_somministrazione")]
-				
-				day = list[i][get_index_from_column_name(metadata, "data_somministrazione")] #update day
-			
-	return data, first_date, last_date
+def	get_daily_data_from_cumulative_data(cumulative_data):
+	daily_data = [cumulative_data[0]]	# initialize daily_data
+	for element in np.diff(cumulative_data):
+		daily_data.append(element)
+	return daily_data
 	
 def	get_cumulative_data_italy_by_age_group(list, metadata, fascia_anagrafica):
 	data = []
-	day = list[1][get_index_from_column_name(metadata, "data_somministrazione")] # initialize day
-	j = 0
+	days = [] # initialize days
+	
 	for i in range(1, len(list)):
-		if(list[i][get_index_from_column_name(metadata, "fascia_anagrafica")]\
-		== fascia_anagrafica):
+		if(list[i][get_index_from_column_name(metadata, "fascia_anagrafica")] == fascia_anagrafica):
 			if (len(data) == 0):
 					data = [float(list[i][get_index_from_column_name(metadata, "sesso_maschile")])\
 					+ (float(list[i][get_index_from_column_name(metadata, "sesso_femminile")]))]
-					first_date = list[i][get_index_from_column_name(metadata, "data_somministrazione")]
-					last_date = first_date
+					
+					days.append(list[i][get_index_from_column_name(metadata, "data_somministrazione")]) #append first day to days
 			else:
-				if (day == list[i][get_index_from_column_name(metadata, "data_somministrazione")]):
+				if (days[len(days) - 1] == list[i][get_index_from_column_name(metadata, "data_somministrazione")]):
 					data[len(data) - 1] += \
 					+ float(list[i][get_index_from_column_name(metadata, "sesso_maschile")])\
 					+ float(list[i][get_index_from_column_name(metadata, "sesso_femminile")])\
@@ -158,58 +137,57 @@ def	get_cumulative_data_italy_by_age_group(list, metadata, fascia_anagrafica):
 					+ float(list[i][get_index_from_column_name(metadata, "sesso_maschile")])\
 					+ float(list[i][get_index_from_column_name(metadata, "sesso_femminile")]))
 					
-					last_date = list[i][get_index_from_column_name(metadata, "data_somministrazione")]
-					
-					day = list[i][get_index_from_column_name(metadata, "data_somministrazione")] #update day
+					days.append(list[i][get_index_from_column_name(metadata, "data_somministrazione")]) #append new day to days
 			
-	return data, first_date, last_date
+	return data, days
 
-def get_cumulative_data_per_area_by_category(list, metadata_list, data_somministrazione, fascia_anagrafica, fornitore, categoria):
+def get_cumulative_data_per_area_by_category(list, metadata_list, fascia_anagrafica, fornitore, categoria):
 	data = []
-	j = 0
+	days = [] # initialize days
+	
 	for i in range (0, len(list)):
 		if (fascia_anagrafica == list[i][get_index_from_column_name(metadata = metadata_list, column_name = "fascia_anagrafica")] \
 		and area == list[i][get_index_from_column_name(metadata = metadata_list, column_name = "area")] \
 		and fornitore == list[i][get_index_from_column_name(metadata = metadata_list, column_name = "fornitore")]):
 			if (len(data) == 0):
-				first_date = list[i][get_index_from_column_name(metadata = metadata_list, column_name = "data_somministrazione")]
-				last_date = first_date
 				data.append(float(list[i][get_index_from_column_name(metadata = metadata_list, column_name = categoria)]))
+				
+				days.append(list[i][get_index_from_column_name(metadata, "data_somministrazione")]) #append first day to day1
 
 			else:
-				data.append(data[len(data) - 1] + float(list[i][get_index_from_column_name(metadata = metadata_list, column_name = categoria)]))
-				last_date = list[i][get_index_from_column_name(metadata = metadata_list, column_name = "data_somministrazione")]
-			
-			while (data_somministrazione[j] != list[i][get_index_from_column_name(metadata = metadata_list, column_name = "data_somministrazione")]):
-				if (len(data) != 0):
-					data.append(data[len(data) - 1])
-				j += 1			
+				if (days[len(days) - 1] == list[i][get_index_from_column_name(metadata, "data_somministrazione")]):
+					data[len(data) - 1] += \
+					float(list[i][get_index_from_column_name(metadata = metadata_list, column_name = categoria)])
+				else:
+					data.append(data[len(data) - 1] + float(list[i][get_index_from_column_name(metadata = metadata_list, column_name = categoria)]))
 					
-	return data, first_date, last_date
+					days.append(list[i][get_index_from_column_name(metadata, "data_somministrazione")]) #append new day to days
+				
+	return data, days
 	
 
-def get_cumulative_data_italy_by_category(list, metadata_list, data_somministrazione, fascia_anagrafica, fornitore, categoria):
+def get_cumulative_data_italy_by_category(list, metadata_list, fascia_anagrafica, fornitore, categoria):
 	data = []
-	j = 0
+	days = [] # initialize days
+	
 	for i in range (0, len(list)):
 		if (fascia_anagrafica == list[i][get_index_from_column_name(metadata = metadata_list, column_name = "fascia_anagrafica")] \
 		and fornitore == list[i][get_index_from_column_name(metadata = metadata_list, column_name = "fornitore")]):
-			if (data_somministrazione[j] == list[i][get_index_from_column_name(metadata = metadata_list, column_name = "data_somministrazione")]):			
-				if (len(data) == 0):
-					first_date = list[i][get_index_from_column_name(metadata = metadata_list, column_name = "data_somministrazione")]
-					last_date = first_date
-					data.append(float(list[i][get_index_from_column_name(metadata = metadata_list, column_name = categoria)]))
+			if (len(data) == 0):
+				data.append(float(list[i][get_index_from_column_name(metadata = metadata_list, column_name = categoria)]))
+				
+				days.append(list[i][get_index_from_column_name(metadata, "data_somministrazione")]) #append first day to day1
 
+			else:
+				if (days[len(days) - 1] == list[i][get_index_from_column_name(metadata, "data_somministrazione")]):
+					data[len(data) - 1] += \
+					float(list[i][get_index_from_column_name(metadata = metadata_list, column_name = categoria)])
 				else:
 					data.append(data[len(data) - 1] + float(list[i][get_index_from_column_name(metadata = metadata_list, column_name = categoria)]))
-					last_date = list[i][get_index_from_column_name(metadata = metadata_list, column_name = "data_somministrazione")]
-			
-			while (data_somministrazione[j] != list[i][get_index_from_column_name(metadata = metadata_list, column_name = "data_somministrazione")]):
-				if (len(data) != 0):
-					data.append(data[len(data) - 1])
-				j += 1			
 					
-	return data, first_date, last_date
+					days.append(list[i][get_index_from_column_name(metadata, "data_somministrazione")]) #append new day to days
+				
+	return data, days
 	
 def get_index_from_column_name(metadata, column_name):
 	for i in range (0, len(metadata)):
@@ -268,16 +246,20 @@ def plot_bar_3data(xlabel, ylabel1, ylabel2, ylabel3, xdata, ydata1, ydata2, yda
 		#autolabel(rect3, ax)
 		return fig
 		
-def plot_line_1data(data, xlimits, xlabel, ylabel):
+def plot_line_1data(xdata, ydata, xlabel, ylabel):
 	screenSize = get_screen_size()
 	fig = plt.figure(figsize = [screenSize[0]/100, screenSize[1]/100])
-	plt.plot(data)
+	plt.plot(ydata)
 	plt.xlabel(xlabel)
 	plt.ylabel(ylabel)
-	plt.xticks([0, len(data)], xlimits)
-	plt.text(x = len(data) - 1, y = data[len(data) - 1], s = str(int(data[len(data) - 1])), horizontalalignment = 'center', verticalalignment = 'bottom')
-	if (max(data) != data[len(data) - 1]):
-		plt.text(x = data.index(max(data)), y = max(data), s = "MAX: "+str(int(data[data.index(max(data))])),\
+	plt.xticks(ticks = [0, math.ceil(len(xdata)/7), 2*math.ceil(len(xdata)/7), 3*math.ceil(len(xdata)/7),\
+			   4*math.ceil(len(xdata)/7), 5*math.ceil(len(xdata)/7), 6*math.ceil(len(xdata)/7), len(xdata)], \
+			   labels = [xdata[0], xdata[math.ceil(len(xdata)/7)] , xdata[2*math.ceil(len(xdata)/7)],\
+			   xdata[3*math.ceil(len(xdata)/7)], xdata[4*math.ceil(len(xdata)/7)], xdata[5*math.ceil(len(xdata)/7)],\
+			   xdata[6*math.ceil(len(xdata)/7)], xdata[len(xdata)-1]])
+	plt.text(x = len(xdata) - 1, y = ydata[len(ydata) - 1], s = str(int(ydata[len(ydata) - 1])), horizontalalignment = 'center', verticalalignment = 'bottom')
+	if (max(ydata) != ydata[len(ydata) - 1]):
+		plt.text(x = ydata.index(max(ydata)), y = max(ydata), s = "MAX: "+str(int(ydata[ydata.index(max(ydata))])),\
 		horizontalalignment = 'center', verticalalignment = 'bottom')
 	return fig
 	
@@ -365,28 +347,29 @@ def main():
 	latest_update = somministrazioni_vaccini[len(somministrazioni_vaccini) - 1][get_index_from_column_name(metadata_somministrazioni_vaccini, "data_somministrazione")]
 	create_destination_folder(folder_name = DESTINATION_FOLDER + "/" + latest_update)
 	
-	data_somministrazione = get_string_list(somministrazioni_vaccini, get_index_from_column_name(metadata = metadata_somministrazioni_vaccini, column_name = "data_somministrazione"))
 	fornitore = get_string_list(somministrazioni_vaccini, get_index_from_column_name(metadata = metadata_somministrazioni_vaccini, column_name = "fornitore"))
 	area = get_string_list(somministrazioni_vaccini, get_index_from_column_name(metadata = metadata_somministrazioni_vaccini, column_name = "area"))
 	fascia_anagrafica = get_string_list(somministrazioni_vaccini, get_index_from_column_name(metadata = metadata_somministrazioni_vaccini, column_name = "fascia_anagrafica"))
 
-	cumulative_data_italy, first_date, last_date = get_cumulative_data_italy(somministrazioni_vaccini, metadata_somministrazioni_vaccini)
+	cumulative_data_italy, days = get_cumulative_data_italy(somministrazioni_vaccini, metadata_somministrazioni_vaccini)
 	if (cumulative_data_italy[len(cumulative_data_italy)-1] != 0):
-		figure = plot_line_1data(data = cumulative_data_italy, xlimits = [first_date, last_date], xlabel = 'Days', ylabel = "Totale dosi somministrate")
+		figure = plot_line_1data(xdata = days, ydata = cumulative_data_italy, xlabel = 'Days', ylabel = "Totale dosi somministrate")
 		count = save_figure(DESTINATION_FOLDER+"/"+latest_update+"/"+latest_update+" - "+str(count)+".png", figure, count)
 		
-	daily_data_italy, first_date, last_date = get_daily_data_italy(somministrazioni_vaccini, metadata_somministrazioni_vaccini)
+	daily_data_italy = get_daily_data_from_cumulative_data(cumulative_data_italy)
+	
 	if (daily_data_italy[len(daily_data_italy)-1] != 0):
-		figure = plot_line_1data(data = daily_data_italy, xlimits = [first_date, last_date], xlabel = 'Days', ylabel = "Dosi somministrate quotidianamente")
+		figure = plot_line_1data(xdata = days, ydata = daily_data_italy, xlabel = 'Days', ylabel = "Dosi somministrate quotidianamente")
 		count = save_figure(DESTINATION_FOLDER+"/"+latest_update+"/"+latest_update+" - "+str(count)+".png", figure, count)
 		
-	doses_administered_today = int(daily_data_italy[len(daily_data_italy)-1])
+	doses_administered_today = int(daily_data_italy[len(daily_data_italy)-1])	# last daily_data_italy are the doses administered today
 	print("Doses administered today (" + latest_update+"): " + str(doses_administered_today))
 	
 	for i in range (0, len(fascia_anagrafica)):
-		cumulative_data_italy_by_age_group, first_date, last_date = get_cumulative_data_italy_by_age_group(somministrazioni_vaccini, metadata_somministrazioni_vaccini, fascia_anagrafica[i])
+		cumulative_data_italy_by_age_group, days = get_cumulative_data_italy_by_age_group(somministrazioni_vaccini, metadata_somministrazioni_vaccini, fascia_anagrafica[i])
+		
 		if (cumulative_data_italy_by_age_group[len(cumulative_data_italy_by_age_group)-1] != 0):
-			figure = plot_line_1data(data = cumulative_data_italy_by_age_group, xlimits = [first_date, last_date], xlabel = 'Days', ylabel = "Fascia anagrafica " + fascia_anagrafica[i])
+			figure = plot_line_1data(xdata = days, ydata = cumulative_data_italy_by_age_group, xlabel = 'Days', ylabel = "Fascia anagrafica " + fascia_anagrafica[i])
 			count = save_figure(DESTINATION_FOLDER+"/"+latest_update+"/"+latest_update+" - "+str(count)+".png", figure, count)
 			
 	# for i in range (0, len(fascia_anagrafica)):
@@ -400,9 +383,9 @@ def main():
 					# and metadata_somministrazioni_vaccini[l] != "codice_NUTS2"\
 					# and metadata_somministrazioni_vaccini[l] != "codice_regione_ISTAT"\
 					# and metadata_somministrazioni_vaccini[l] != "nome_area"):
-						# cumulative_data_per_area_by_category, first_date, last_date = get_cumulative_data_per_area_by_category(somministrazioni_vaccini, metadata_somministrazioni_vaccini, data_somministrazione, fascia_anagrafica[i], area[j], fornitore[k], metadata_somministrazioni_vaccini[l])
+						# cumulative_data_per_area_by_category, days = get_cumulative_data_per_area_by_category(somministrazioni_vaccini, metadata_somministrazioni_vaccini, fascia_anagrafica[i], area[j], fornitore[k], metadata_somministrazioni_vaccini[l])
 						# if (cumulative_data_per_area_by_category[len(cumulative_data_per_area_by_category)-1] != 0):
-							# figure = plot_line_1data(data = cumulative_data_per_area_by_category, xlimits = [first_date, last_date], xlabel = 'Days', ylabel = fornitore[k] + " " + area[j] + " " + metadata_somministrazioni_vaccini[l] + " fascia anagrafica " + fascia_anagrafica[i])
+							# figure = plot_line_1data(xdata = days, ydata = cumulative_data_per_area_by_category, xlabel = 'Days', ylabel = fornitore[k] + " " + area[j] + " " + metadata_somministrazioni_vaccini[l] + " fascia anagrafica " + fascia_anagrafica[i])
 							# count = save_figure(DESTINATION_FOLDER+"/"+latest_update+"/"+latest_update+" - "+str(count)+".png", figure, count)
 		
 	# for i in range (0, len(fascia_anagrafica)):
@@ -416,13 +399,14 @@ def main():
 				# and metadata_somministrazioni_vaccini[l] != "codice_NUTS2"\
 				# and metadata_somministrazioni_vaccini[l] != "codice_regione_ISTAT"\
 				# and metadata_somministrazioni_vaccini[l] != "nome_area"):
-					# cumulative_data_italy_by_category, first_date, last_date = get_cumulative_data_italy_by_category(somministrazioni_vaccini, metadata_somministrazioni_vaccini, data_somministrazione, fascia_anagrafica[i], fornitore[k], metadata_somministrazioni_vaccini[l])
+					# cumulative_data_italy_by_category, first_date, last_date = get_cumulative_data_italy_by_category(somministrazioni_vaccini, metadata_somministrazioni_vaccini, fascia_anagrafica[i], fornitore[k], metadata_somministrazioni_vaccini[l])
 					# if (cumulative_data_italy_by_category[len(cumulative_data_italy_by_category)-1] != 0):
-						# figure = plot_line_1data(data = cumulative_data_italy_by_category, xlimits = [first_date, last_date], xlabel = 'Days', ylabel = fornitore[k] + " Italy " + metadata_somministrazioni_vaccini[l] + " fascia anagrafica " + fascia_anagrafica[i])
+						# figure = plot_line_1data(xdata = days, ydata = cumulative_data_italy_by_category, xlabel = 'Days', ylabel = fornitore[k] + " Italy " + metadata_somministrazioni_vaccini[l] + " fascia anagrafica " + fascia_anagrafica[i])
 						# count = save_figure(DESTINATION_FOLDER+"/"+latest_update+"/"+latest_update+" - "+str(count)+".png", figure, count)
 		
 	if SAVING_CHARTS_ENABLED:
 		print (count, "charts saved.")
+		
 	if SHOW_CHARTS_ENABLED:
 		plt.show()
 		
