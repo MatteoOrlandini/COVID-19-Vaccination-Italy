@@ -36,7 +36,7 @@ def start_thread(api, latest_update, total_doses_administered, total_doses_deliv
 	return(original_tweet)
 
 def update_thread(api, latest_update, reply_tweet):
-	file_names = os.scandir("./Charts/" + latest_update)
+	file_names = os.scandir("/Charts/" + latest_update)
 	media_ids = []
 	j = 0
 	i = 2

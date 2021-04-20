@@ -1,4 +1,5 @@
 # update readme
+import os
 
 def read_base_readme(file_name):
 	file = open(file_name, "r")
@@ -14,17 +15,16 @@ def get_charts_name(file_name):
 	file.close() 
 	return charts_name
 	
-def readme_update(file_name, base_readme, latest_update, charts_name):
+def readme_update(readme_name, base_readme, latest_update):
 	base_readme = base_readme + latest_update +".\n\n"
-	file = open(file_name, "w")
-	file.write(base_readme)
-	for i in range (0, len(charts_name)):
-		file.write(charts_name[i]+"\n")
-		file.write("![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/"+latest_update+"/"+latest_update+"%20-%20"+str(i)+".png)\n\n")
-	file.close
+	readme = open(readme_name, "w")
+	readme.write(base_readme)
+	files = os.scandir("./Charts/" + latest_update)
+	for file in files:
+		readme.write("![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/"+latest_update+"/"+file.name.replace(' ','%20')+")\n\n")
+	readme.close
 	
 def create_readme(latest_update):
 	base_readme = read_base_readme("base_readme.md")
-	charts_name = get_charts_name("charts_name.txt")
-	readme_update("README.md", base_readme, latest_update, charts_name)
+	readme_update("README.md", base_readme, latest_update)
 	return True

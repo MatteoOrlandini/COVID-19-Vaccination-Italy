@@ -15,7 +15,7 @@ SHOW_CHARTS_ENABLED = 0
 SAVING_CHARTS_ENABLED = 1
 
 # the folder that contains the saved charts
-DESTINATION_FOLDER = "Charts"
+DESTINATION_PATH = "Charts/"
 
 def download(fileName, url):	
 	print('Downloading CSV dataset from '+url)
@@ -220,13 +220,15 @@ def	create_destination_folder(folder_name):
 	try:
 		os.mkdir(folder_name)
 	except FileExistsError:
-		print("Folder " + folder_name + " already exists")
+		#print("Folder " + folder_name + " already exists")
+		None
 		
-def save_figure(figure_name, figure, count):
+def save_figure(figure_name, latest_update, figure, count):
+	create_destination_folder(folder_name = DESTINATION_PATH + latest_update)
 	if (figure != None and SAVING_CHARTS_ENABLED):
 		figManager = plt.get_current_fig_manager()
 		figManager.full_screen_toggle()
-		figure.savefig(fname = figure_name, format = 'png')
+		figure.savefig(fname = DESTINATION_PATH + latest_update + "/" + latest_update + "-" + figure_name, format = 'png')
 		count += 1
 	plt.close(figure)
 	return count
@@ -242,7 +244,6 @@ def main():
 	
 	# get the latest update of the csv 'vaccini-summary-latest.csv'
 	latest_update = vaccini_summary_latest[len(vaccini_summary_latest) - 1][get_index_from_column_name(metadata_vaccini_summary_latest, "ultimo_aggiornamento")]
-	create_destination_folder(folder_name = DESTINATION_FOLDER + "/" + latest_update)
 	
 	# get the total number of administered doses 
 	total_doses_administered = sum_data(vaccini_summary_latest, metadata_vaccini_summary_latest, dataType = 'dosi_somministrate')	
@@ -259,22 +260,23 @@ def main():
 			xdata = get_string_list(vaccini_summary_latest, get_index_from_column_name(metadata_vaccini_summary_latest, "area"))
 			ydata = get_data_list(vaccini_summary_latest, i)
 			figure = plot_bar_1data('area', metadata_vaccini_summary_latest[i], xdata, ydata)
-			count = save_figure(DESTINATION_FOLDER+"/"+latest_update+"/"+latest_update+" - "+str(count)+".png", figure, count)
+			count = save_figure(figure_name = "area-" + metadata_vaccini_summary_latest[i] + ".png",\
+					latest_update = latest_update, figure = figure, count = count)
 			
 	# read anagrafica-vaccini-summary-latest.csv
 	anagrafica_vaccini, metadata_anagrafica_vaccini = csv_reader('anagrafica-vaccini-summary-latest.csv')
 	
 	# get the latest update of the csv 'anagrafica-vaccini-summary-latest.csv'
 	latest_update = anagrafica_vaccini[len(anagrafica_vaccini) - 1][get_index_from_column_name(metadata_anagrafica_vaccini, "ultimo_aggiornamento")]
-	create_destination_folder(folder_name = DESTINATION_FOLDER + "/" + latest_update)
 	
 	# get total vaccinations for each metadata of the csv 'anagrafica-vaccini-summary-latest.csv'
 	for i in range (1, len(metadata_anagrafica_vaccini)):
 		xdata = get_string_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, "fascia_anagrafica"))
 		ydata = get_data_list(anagrafica_vaccini, i)
 		figure = (plot_bar_1data('fascia_anagrafica', metadata_anagrafica_vaccini[i], xdata, ydata))
-		count = save_figure(DESTINATION_FOLDER+"/"+latest_update+"/"+latest_update+" - "+str(count)+".png", figure, count)
-			
+		count = save_figure(figure_name = "fascia_anagrafica-" + metadata_anagrafica_vaccini[i] + ".png",\
+					latest_update = latest_update, figure = figure, count = count)	
+		
 	# get total vaccinations for male and female
 	xdata = get_string_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'fascia_anagrafica'))	
 	ydata1 = get_data_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'sesso_maschile'))
@@ -282,7 +284,8 @@ def main():
 	
 	# plot total vaccinations for male and female
 	figure = plot_bar_2data('fascia_anagrafica', 'sesso_maschile', 'sesso_femminile', xdata, ydata1, ydata2)
-	count = save_figure(DESTINATION_FOLDER+"/"+latest_update+"/"+latest_update+" - "+str(count)+".png", figure, count)
+	count = save_figure(figure_name = "fascia_anagrafica-sesso_maschile-sesso_femminile.png",\
+					latest_update = latest_update, figure = figure, count = count)	
 	
 	# get first and second doses for each age group
 	xdata = get_string_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'fascia_anagrafica'))	
@@ -291,7 +294,8 @@ def main():
 	
 	# plot first and second doses for each age group
 	figure = plot_bar_2data('fascia_anagrafica', 'prima_dose', 'seconda_dose', xdata, ydata1, ydata2)
-	count = save_figure(DESTINATION_FOLDER+"/"+latest_update+"/"+latest_update+" - "+str(count)+".png", figure, count)
+	count = save_figure(figure_name = "fascia_anagrafica-prima_dose-seconda_dose.png",\
+					latest_update = latest_update, figure = figure, count = count)	
 	
 	# get total vaccinations for social health workers, non-health personnel and guests of residential care homes
 	xdata = get_string_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'fascia_anagrafica'))	
@@ -301,7 +305,8 @@ def main():
 	
 	# plot total vaccinations for social health workers, non-health personnel and guests of residential care homes
 	figure = plot_bar_3data('fascia_anagrafica', 'categoria_operatori_sanitari_sociosanitari', 'categoria_personale_non_sanitario', 'categoria_ospiti_rsa', xdata, ydata1, ydata2, ydata3)
-	count = save_figure(DESTINATION_FOLDER+"/"+latest_update+"/"+latest_update+" - "+str(count)+".png", figure, count)
+	count = save_figure(figure_name = "fascia_anagrafica-categoria_operatori_sanitari_sociosanitari-categoria_personale_non_sanitario-categoria_ospiti_rsa.png",\
+					latest_update = latest_update, figure = figure, count = count)	
 	
 	# get total vaccinations for other people, armed forces and school personnel
 	xdata = get_string_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'fascia_anagrafica'))	
@@ -311,15 +316,15 @@ def main():
 	
 	# plot total vaccinations for other people, armed forces and school personnel
 	figure = plot_bar_3data('fascia_anagrafica', 'categoria_altro', 'categoria_forze_armate', 'categoria_personale_scolastico', xdata, ydata1, ydata2, ydata3)
-	count = save_figure(DESTINATION_FOLDER+"/"+latest_update+"/"+latest_update+" - "+str(count)+".png", figure, count)
-	
+	count = save_figure(figure_name = "fascia_anagrafica-categoria_altro-categoria_forze_armate-categoria_personale_scolastico.png",\
+					latest_update = latest_update, figure = figure, count = count)	
+					
 	# read somministrazioni-vaccini-latest.csv
 	somministrazioni_vaccini, metadata_somministrazioni_vaccini = csv_reader('somministrazioni-vaccini-latest.csv')
 	
 	# get latest update of the csv 'somministrazioni-vaccini-latest.csv'
 	latest_update = somministrazioni_vaccini[len(somministrazioni_vaccini) - 1][get_index_from_column_name(metadata_somministrazioni_vaccini, "data_somministrazione")]
-	create_destination_folder(folder_name = DESTINATION_FOLDER + "/" + latest_update)
-	
+
 	# get name of supplier, area and age_group
 	supplier = get_string_list(somministrazioni_vaccini, get_index_from_column_name(metadata = metadata_somministrazioni_vaccini, column_name = "fornitore"))
 	area = get_string_list(somministrazioni_vaccini, get_index_from_column_name(metadata = metadata_somministrazioni_vaccini, column_name = "area"))
@@ -338,16 +343,18 @@ def main():
 	# plot total administered doses over time
 	if (cumulative_data_italy[len(cumulative_data_italy)-1] != 0):
 		figure = plot_line_1data(xdata = days, ydata = cumulative_data_italy, xlabel = 'Giorni', ylabel = "Totale dosi somministrate")
-		count = save_figure(DESTINATION_FOLDER+"/"+latest_update+"/"+latest_update+" - "+str(count)+".png", figure, count)
-		
+		count = save_figure(figure_name = "giorni-dosi_totali.png",\
+					latest_update = latest_update, figure = figure, count = count)	
+	
 	# get daily administered doses over time
 	daily_data_italy = get_daily_data_from_cumulative_data(cumulative_data_italy)
 	
 	# plot daily administered doses over time
 	if (daily_data_italy[len(daily_data_italy)-1] != 0):
 		figure = plot_line_1data(xdata = days, ydata = daily_data_italy, xlabel = 'Giorni', ylabel = "Dosi somministrate quotidianamente")
-		count = save_figure(DESTINATION_FOLDER+"/"+latest_update+"/"+latest_update+" - "+str(count)+".png", figure, count)
-	
+		count = save_figure(figure_name = "giorni-dosi_giornaliere.png",\
+					latest_update = latest_update, figure = figure, count = count)	
+					
 	# get the number of doses administered today
 	doses_administered_today = int(daily_data_italy[len(daily_data_italy)-1])	# last daily_data_italy are the doses administered today
 	print("Administered doses today (" + latest_update+"): " + str(doses_administered_today))
@@ -368,8 +375,9 @@ def main():
 		# plot total administered doses for each age group over time
 		if (cumulative_data_italy_by_age_group[len(cumulative_data_italy_by_age_group)-1] != 0):
 			figure = plot_line_1data(xdata = days, ydata = cumulative_data_italy_by_age_group, xlabel = 'Giorni', ylabel = "Fascia anagrafica " + age_group[j])
-			count = save_figure(DESTINATION_FOLDER+"/"+latest_update+"/"+latest_update+" - "+str(count)+".png", figure, count)
-
+			count = save_figure(figure_name = "giorni-fascia_anagrafica-" + age_group[j] + ".png",\
+					latest_update = latest_update, figure = figure, count = count)	
+		
 	# get total administered doses for each supplier over time
 	for j in range (0, len(supplier)):
 		cumulative_data_italy_by_supplier = []
@@ -386,8 +394,9 @@ def main():
 		# plot total administered doses for each supplier over time
 		if (cumulative_data_italy_by_supplier[len(cumulative_data_italy_by_supplier)-1] != 0):
 			figure = plot_line_1data(xdata = days, ydata = cumulative_data_italy_by_supplier, xlabel = 'Giorni', ylabel = "Fornitore " + supplier[j])
-			count = save_figure(DESTINATION_FOLDER+"/"+latest_update+"/"+latest_update+" - "+str(count)+".png", figure, count)
-
+			count = save_figure(figure_name = "giorni-fornitore-" + supplier[j].replace('/', '-') + ".png",\
+					latest_update = latest_update, figure = figure, count = count)	
+		
 	# get total first doses over time
 	first_doses_italy = []
 	days_first_doses_italy = []
@@ -411,8 +420,9 @@ def main():
 			figure = plot_line_2data(xdata1 = days_first_doses_italy, xdata2 = days_second_doses_italy,\
 									 ydata1 = first_doses_italy, ydata2 = second_doses_italy,\
 									 xlabel = 'Giorni', ylabel1 = 'prima dose', ylabel2 = 'seconda dose')
-			count = save_figure(DESTINATION_FOLDER+"/"+latest_update+"/"+latest_update+" - "+str(count)+".png", figure, count)
-
+			count = save_figure(figure_name = "giorni-prima_dose-seconda_dose.png",\
+					latest_update = latest_update, figure = figure, count = count)	
+		
 	
 	
 	if SAVING_CHARTS_ENABLED:
@@ -424,8 +434,8 @@ def main():
 	if (readme_autoupdate.create_readme(latest_update) == True):
 		print("README.md updated.")
 		
-	if (twitter.post_tweet(latest_update, total_doses_administered, total_doses_delivered, doses_administered_today) == True):
-		print("Your tweet has been posted.")
+	#if (twitter.post_tweet(latest_update, total_doses_administered, total_doses_delivered, doses_administered_today) == True):
+	#	print("Your tweet has been posted.")
 	
 if __name__ == "__main__":
     main()
