@@ -31,12 +31,11 @@ def start_thread(api, latest_update, total_doses_administered, total_doses_deliv
 			  +"#vaccinoAntiCovid\n"\
 			  +"1/n"
 			  
-			  
 	original_tweet = api.update_status(status = message)
 	return(original_tweet)
 
 def update_thread(api, latest_update, reply_tweet):
-	file_names = os.scandir("/Charts/" + latest_update)
+	file_names = os.scandir("./Charts/" + latest_update)
 	media_ids = []
 	j = 0
 	i = 2

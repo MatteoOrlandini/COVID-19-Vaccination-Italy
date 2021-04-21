@@ -434,8 +434,8 @@ def main():
 	if (readme_autoupdate.create_readme(latest_update) == True):
 		print("README.md updated.")
 		
-	#if (twitter.post_tweet(latest_update, total_doses_administered, total_doses_delivered, doses_administered_today) == True):
-	#	print("Your tweet has been posted.")
+	if (twitter.post_tweet(latest_update, total_doses_administered, total_doses_delivered, doses_administered_today) == True):
+		print("Your tweet has been posted.")
 	
 if __name__ == "__main__":
     main()
