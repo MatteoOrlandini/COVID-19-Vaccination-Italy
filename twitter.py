@@ -5,10 +5,10 @@ import os
 
 def get_twitter_key(file_name):
 	file = open(file_name, "r")
-	consumer_key = file.readline()
-	consumer_secret = file.readline()
-	access_token = file.readline()
-	access_token_secret = file.readline()
+	consumer_key = file.readline()			# API key
+	consumer_secret = file.readline()		# API key secret	
+	access_token = file.readline()			# access token
+	access_token_secret = file.readline()	# access token secret
 	return consumer_key.rstrip("\n"), consumer_secret.rstrip("\n"), access_token.rstrip("\n"), access_token_secret.rstrip("\n")
 	
 
@@ -42,15 +42,13 @@ def update_thread(api, latest_update, reply_tweet):
 	for file_name in file_names:
 		res = api.media_upload(file_name)
 		media_ids.append(res.media_id)
-		j += 1
-		if (j == 4):
+		if (len(media_ids) == 4):
 			reply_tweet = api.update_status(status = str(i)+"/n", \
 							  media_ids = media_ids, \
 							  in_reply_to_status_id = reply_tweet.id, \
 							  auto_populate_reply_metadata = True)
 			i += 1			
 			media_ids = []
-			j = 0
 	  
 def post_tweet(latest_update, total_doses_administered, total_doses_delivered, doses_administered_today):
 	consumer_key, consumer_secret, access_token, access_token_secret = get_twitter_key("twitter_key.txt")
