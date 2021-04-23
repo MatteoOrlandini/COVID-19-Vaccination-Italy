@@ -56,16 +56,6 @@ def get_screen_size():
 	screensize = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
 	return screensize
 
-def autolabel(rects, ax):
-    # Attach a text label above each bar in *rects*, displaying its height.
-    for rect in rects:
-        height = rect.get_height()
-        ax.annotate('{}'.format(height),
-                    xy=(rect.get_x() + rect.get_width() / 2, height),
-                    xytext=(0, 3),  # 3 points vertical offset
-                    textcoords="offset points",
-                    ha='center', va='bottom')
-
 def get_string_list(list, column_index):
 	data = [list[1][column_index]] # initialize list
 	for i in range (2, len (list)):	
@@ -106,18 +96,22 @@ def get_index_from_column_name(metadata, column_name):
 	for i in range (0, len(metadata)):
 		if (metadata[i] == column_name):
 			return i
-
+					
 def plot_bar_1data(xlabel, ylabel, xdata, ydata):
 	if (ydata == None):
 		return None
 	else:
 		# get screen size to plot graphs full screen
 		screenSize = get_screen_size()
-		fig = plt.figure(figsize = [screenSize[0]/100, screenSize[1]/100])
-		plt.bar(xdata, ydata)
-		plt.xlabel(xlabel)
-		plt.ylabel(ylabel)
-		return fig
+		fig, ax = plt.subplots(figsize = [screenSize[0]/100, screenSize[1]/100])
+		rect = ax.bar(np.arange(len(xdata)), ydata, label = ylabel)
+		ax.set_xlabel(xlabel)
+		ax.set_ylabel(ylabel)
+		ax.set_xticks(np.arange(len(xdata)))
+		ax.set_xticklabels(xdata)
+		ax.bar_label(rect, horizontalalignment = 'center', verticalalignment = 'bottom')
+		ax.ticklabel_format(axis = 'y', style='plain')
+		return fig 
 	
 def plot_bar_2data(xlabel, ylabel1, ylabel2, xdata, ydata1, ydata2):
 	if (ydata1 == None or ydata2 == None):
@@ -134,8 +128,9 @@ def plot_bar_2data(xlabel, ylabel1, ylabel2, xdata, ydata1, ydata2):
 		ax.set_xticks(np.arange(len(xdata)))
 		ax.set_xticklabels(xdata)
 		ax.legend()
-		#autolabel(rect1, ax)
-		#autolabel(rect2, ax)
+		ax.bar_label(rect1, horizontalalignment = 'center', verticalalignment = 'bottom')
+		ax.bar_label(rect2, horizontalalignment = 'center', verticalalignment = 'bottom')
+		ax.ticklabel_format(axis = 'y', style='plain')
 		return fig
 	
 def plot_bar_3data(xlabel, ylabel1, ylabel2, ylabel3, xdata, ydata1, ydata2, ydata3):
@@ -154,9 +149,10 @@ def plot_bar_3data(xlabel, ylabel1, ylabel2, ylabel3, xdata, ydata1, ydata2, yda
 		ax.set_xticks(np.arange(len(xdata)))
 		ax.set_xticklabels(xdata)
 		ax.legend()
-		#autolabel(rect1, ax)
-		#autolabel(rect2, ax)
-		#autolabel(rect3, ax)
+		ax.bar_label(rect1, horizontalalignment = 'center', verticalalignment = 'bottom')
+		ax.bar_label(rect2, horizontalalignment = 'center', verticalalignment = 'bottom')
+		ax.bar_label(rect3, horizontalalignment = 'center', verticalalignment = 'bottom')
+		ax.ticklabel_format(axis = 'y', style='plain')
 		return fig
 		
 def plot_line_1data(xdata, ydata, xlabel, ylabel):
@@ -165,11 +161,10 @@ def plot_line_1data(xdata, ydata, xlabel, ylabel):
 	plt.plot(ydata)
 	plt.xlabel(xlabel)
 	plt.ylabel(ylabel)
-	plt.xticks(ticks = [0, math.ceil(len(xdata)/7), 2*math.ceil(len(xdata)/7), 3*math.ceil(len(xdata)/7),\
-			   4*math.ceil(len(xdata)/7), 5*math.ceil(len(xdata)/7), 6*math.ceil(len(xdata)/7), len(xdata)], \
-			   labels = [xdata[0], xdata[math.ceil(len(xdata)/7)] , xdata[2*math.ceil(len(xdata)/7)],\
-			   xdata[3*math.ceil(len(xdata)/7)], xdata[4*math.ceil(len(xdata)/7)], xdata[5*math.ceil(len(xdata)/7)],\
-			   xdata[6*math.ceil(len(xdata)/7)], xdata[len(xdata)-1]])
+	plt.xticks(ticks = np.linspace(start = 0, stop = len(xdata) - 1, num = 8), \
+			  labels = [xdata[0], xdata[math.floor(len(xdata)/7)] , xdata[2*math.floor(len(xdata)/7)],\
+			  xdata[3*math.floor(len(xdata)/7)], xdata[4*math.floor(len(xdata)/7)], xdata[5*math.floor(len(xdata)/7)],\
+			  xdata[6*math.floor(len(xdata)/7)], xdata[len(xdata)-1]])
 	plt.text(x = len(xdata) - 1, y = ydata[len(ydata) - 1], s = str(int(ydata[len(ydata) - 1])), horizontalalignment = 'center', verticalalignment = 'bottom')
 	if (max(ydata) != ydata[len(ydata) - 1]):
 		plt.text(x = ydata.index(max(ydata)), y = max(ydata), s = "MAX: "+str(int(ydata[ydata.index(max(ydata))])),\
@@ -182,31 +177,28 @@ def plot_line_2data(xdata1, xdata2, ydata1, ydata2, xlabel, ylabel1, ylabel2):
 	if (len(ydata1) == len(ydata2)):
 		plt.plot(ydata1)
 		plt.plot(ydata2)
-		plt.xticks(ticks = [0, math.ceil(len(xdata1)/7), 2*math.ceil(len(xdata1)/7), 3*math.ceil(len(xdata1)/7),\
-				   4*math.ceil(len(xdata1)/7), 5*math.ceil(len(xdata1)/7), 6*math.ceil(len(xdata1)/7), len(xdata1)], \
-				   labels = [xdata1[0], xdata1[math.ceil(len(xdata1)/7)] , xdata1[2*math.ceil(len(xdata1)/7)],\
-				   xdata1[3*math.ceil(len(xdata1)/7)], xdata1[4*math.ceil(len(xdata1)/7)], xdata1[5*math.ceil(len(xdata1)/7)],\
-				   xdata1[6*math.ceil(len(xdata1)/7)], xdata1[len(xdata1)-1]])
+		plt.xticks(ticks = np.linspace(start = 0, stop = len(xdata1) - 1, num = 8), \
+				   labels = [xdata1[0], xdata1[math.floor(len(xdata1)/7)] , xdata1[2*math.floor(len(xdata1)/7)],\
+				   xdata1[3*math.floor(len(xdata1)/7)], xdata1[4*math.floor(len(xdata1)/7)], xdata1[5*math.floor(len(xdata1)/7)],\
+				   xdata1[6*math.floor(len(xdata1)/7)], xdata1[len(xdata1)-1]])
 	
 	if (len(ydata1) > len(ydata2)):
 		plt.plot(ydata1)
 		initial_zeros = list(np.zeros(len(ydata1) - len(ydata2)))
 		plt.plot(initial_zeros.extend(ydata2))
-		plt.xticks(ticks = [0, math.ceil(len(xdata1)/7), 2*math.ceil(len(xdata1)/7), 3*math.ceil(len(xdata1)/7),\
-				   4*math.ceil(len(xdata1)/7), 5*math.ceil(len(xdata1)/7), 6*math.ceil(len(xdata1)/7), len(xdata1)], \
-				   labels = [xdata1[0], xdata1[math.ceil(len(xdata1)/7)] , xdata1[2*math.ceil(len(xdata1)/7)],\
-				   xdata1[3*math.ceil(len(xdata1)/7)], xdata1[4*math.ceil(len(xdata1)/7)], xdata1[5*math.ceil(len(xdata1)/7)],\
-				   xdata1[6*math.ceil(len(xdata1)/7)], xdata1[len(xdata1)-1]])
+		plt.xticks(ticks = np.linspace(start = 0, stop = len(xdata1) - 1, num = 8), \
+				   labels = [xdata1[0], xdata1[math.floor(len(xdata1)/7)] , xdata1[2*math.floor(len(xdata1)/7)],\
+				   xdata1[3*math.floor(len(xdata1)/7)], xdata1[4*math.floor(len(xdata1)/7)], xdata1[5*math.floor(len(xdata1)/7)],\
+				   xdata1[6*math.floor(len(xdata1)/7)], xdata1[len(xdata1)-1]])
 	
 	if (len(ydata2) > len(ydata1)):
 		plt.plot(ydata2)
 		initial_zeros = list(np.zeros(len(ydata2) - len(ydata1)))
 		plt.plot(initial_zeros.extend(ydata1))
-		plt.xticks(ticks = [0, math.ceil(len(xdata2)/7), 2*math.ceil(len(xdata2)/7), 3*math.ceil(len(xdata2)/7),\
-			   4*math.ceil(len(xdata2)/7), 5*math.ceil(len(xdata2)/7), 6*math.ceil(len(xdata2)/7), len(xdata2)], \
-			   labels = [xdata2[0], xdata2[math.ceil(len(xdata2)/7)] , xdata2[2*math.ceil(len(xdata2)/7)],\
-			   xdata2[3*math.ceil(len(xdata2)/7)], xdata[4*math.ceil(len(xdata2)/7)], xdata2[5*math.ceil(len(xdata2)/7)],\
-			   xdata2[6*math.ceil(len(xdata2)/7)], xdata[len(xdata2)-1]])
+		plt.xticks(ticks = np.linspace(start = 0, stop = len(xdata2) - 1, num = 8), \
+			       labels = [xdata2[0], xdata2[math.floor(len(xdata2)/7)] , xdata2[2*math.floor(len(xdata2)/7)],\
+			       xdata2[3*math.floor(len(xdata2)/7)], xdata2[4*math.floor(len(xdata2)/7)], xdata2[5*math.floor(len(xdata2)/7)],\
+			       xdata2[6*math.floor(len(xdata2)/7)], xdata2[len(xdata2)-1]])
 	
 	plt.text(x = len(ydata1) - 1, y = ydata1[len(ydata1) - 1], s = str(int(ydata1[len(ydata1) - 1])), horizontalalignment = 'center', verticalalignment = 'bottom')
 	plt.text(x = len(ydata2) - 1, y = ydata2[len(ydata2) - 1], s = str(int(ydata2[len(ydata2) - 1])), horizontalalignment = 'center', verticalalignment = 'bottom')
@@ -247,18 +239,20 @@ def main():
 	
 	# get the total number of administered doses 
 	total_doses_administered = sum_data(vaccini_summary_latest, metadata_vaccini_summary_latest, dataType = 'dosi_somministrate')	
-	print ('Total administered doses:', total_doses_administered)
+	print ("Total administered doses: " + str(total_doses_administered))
 	
 	# get the total number of delivered doses 
 	total_doses_delivered = sum_data(vaccini_summary_latest, metadata_vaccini_summary_latest, dataType = 'dosi_consegnate')
-	print ('Total delivered doses:', total_doses_delivered)
+	print ("Total delivered doses: " + str(total_doses_delivered))
 	
 	# get total vaccinations for each metadata of the csv 'vaccini-summary-latest.csv'
 	count = 0
+	xdata = get_string_list(vaccini_summary_latest, get_index_from_column_name(metadata_vaccini_summary_latest, "area"))
 	for i in range (1, len(metadata_vaccini_summary_latest)):
 		if (metadata_vaccini_summary_latest[i] != "codice_regione_ISTAT"):	
-			xdata = get_string_list(vaccini_summary_latest, get_index_from_column_name(metadata_vaccini_summary_latest, "area"))
 			ydata = get_data_list(vaccini_summary_latest, i)
+			
+			# plot data for each area
 			figure = plot_bar_1data('area', metadata_vaccini_summary_latest[i], xdata, ydata)
 			count = save_figure(figure_name = "area-" + metadata_vaccini_summary_latest[i] + ".png",\
 					latest_update = latest_update, figure = figure, count = count)
@@ -270,9 +264,11 @@ def main():
 	latest_update = anagrafica_vaccini[len(anagrafica_vaccini) - 1][get_index_from_column_name(metadata_anagrafica_vaccini, "ultimo_aggiornamento")]
 	
 	# get total vaccinations for each metadata of the csv 'anagrafica-vaccini-summary-latest.csv'
+	xdata = get_string_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, "fascia_anagrafica"))
 	for i in range (1, len(metadata_anagrafica_vaccini)):
-		xdata = get_string_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, "fascia_anagrafica"))
 		ydata = get_data_list(anagrafica_vaccini, i)
+		
+		# plot data for each age group
 		figure = (plot_bar_1data('fascia_anagrafica', metadata_anagrafica_vaccini[i], xdata, ydata))
 		count = save_figure(figure_name = "fascia_anagrafica-" + metadata_anagrafica_vaccini[i] + ".png",\
 					latest_update = latest_update, figure = figure, count = count)	
