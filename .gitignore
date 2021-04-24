@@ -3,5 +3,5 @@ charts_name.txt
 twitter_key.txt
 twitter_key_matteo.txt
 \__pycache__
-/Charts/
+/Charts/*
 !/Charts/2021-04-23
