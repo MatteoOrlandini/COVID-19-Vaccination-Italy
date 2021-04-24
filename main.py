@@ -6,6 +6,7 @@ import ctypes # to get screen size
 import os
 import math
 import readme_autoupdate
+import gitignore_autoupdate
 import twitter
 
 # set SHOW_CHARTS_ENABLED = 1 to show all the charts
@@ -97,7 +98,7 @@ def get_index_from_column_name(metadata, column_name):
 		if (metadata[i] == column_name):
 			return i
 					
-def plot_bar_1data(xlabel, ylabel, xdata, ydata):
+def plot_bar_1data(xdata, ydata, xlabel, ylabel):
 	if (ydata == None):
 		return None
 	else:
@@ -109,18 +110,18 @@ def plot_bar_1data(xlabel, ylabel, xdata, ydata):
 		ax.set_ylabel(ylabel)
 		ax.set_xticks(np.arange(len(xdata)))
 		ax.set_xticklabels(xdata)
-		ax.bar_label(rect, horizontalalignment = 'center', verticalalignment = 'bottom')
-		ax.ticklabel_format(axis = 'y', style='plain')
+		ax.bar_label(rect, horizontalalignment = 'center', verticalalignment = 'bottom', fmt = '%g')
+		#ax.ticklabel_format(axis = 'y', style = 'plain')
 		return fig 
 	
-def plot_bar_2data(xlabel, ylabel1, ylabel2, xdata, ydata1, ydata2):
+def plot_bar_2data(xdata, ydata1, ydata2, xlabel, ylabel1, ylabel2):
 	if (ydata1 == None or ydata2 == None):
 		return None
 	else:
 		bar_width = 0.35  # width of the bar
+		# get screen size to plot graphs full screen
 		screenSize = get_screen_size()
-		fig = plt.figure(figsize = [screenSize[0]/100, screenSize[1]/100])
-		ax = plt.subplot()
+		fig, ax = plt.subplots(figsize = [screenSize[0]/100, screenSize[1]/100])
 		rect1 = ax.bar(np.arange(len(xdata)) - bar_width/2, ydata1, bar_width, label = ylabel1)
 		rect2 = ax.bar(np.arange(len(xdata)) + bar_width/2, ydata2, bar_width, label = ylabel2)
 		ax.set_xlabel(xlabel)
@@ -128,19 +129,19 @@ def plot_bar_2data(xlabel, ylabel1, ylabel2, xdata, ydata1, ydata2):
 		ax.set_xticks(np.arange(len(xdata)))
 		ax.set_xticklabels(xdata)
 		ax.legend()
-		ax.bar_label(rect1, horizontalalignment = 'center', verticalalignment = 'bottom')
-		ax.bar_label(rect2, horizontalalignment = 'center', verticalalignment = 'bottom')
-		ax.ticklabel_format(axis = 'y', style='plain')
+		ax.bar_label(rect1, horizontalalignment = 'center', verticalalignment = 'bottom', fmt = '%g')
+		ax.bar_label(rect2, horizontalalignment = 'center', verticalalignment = 'bottom', fmt = '%g')
+		#ax.ticklabel_format(axis = 'y', style = 'plain')
 		return fig
 	
-def plot_bar_3data(xlabel, ylabel1, ylabel2, ylabel3, xdata, ydata1, ydata2, ydata3):
+def plot_bar_3data(xdata, ydata1, ydata2, ydata3, xlabel, ylabel1, ylabel2, ylabel3):
 	if (ydata1 == None or ydata2 == None or ydata3 == None):
 		return None
 	else:
 		bar_width = 0.25  # width of the bar
+		# get screen size to plot graphs full screen
 		screenSize = get_screen_size()
-		fig = plt.figure(figsize = [screenSize[0]/100, screenSize[1]/100])
-		ax = plt.subplot()
+		fig, ax = plt.subplots(figsize = [screenSize[0]/100, screenSize[1]/100])
 		rect1 = ax.bar(np.arange(len(xdata)) - bar_width, ydata1, bar_width, label = ylabel1)
 		rect2 = ax.bar(np.arange(len(xdata)), ydata2, bar_width, label = ylabel2)
 		rect3 = ax.bar(np.arange(len(xdata)) + bar_width, ydata3, bar_width, label = ylabel3)
@@ -149,23 +150,41 @@ def plot_bar_3data(xlabel, ylabel1, ylabel2, ylabel3, xdata, ydata1, ydata2, yda
 		ax.set_xticks(np.arange(len(xdata)))
 		ax.set_xticklabels(xdata)
 		ax.legend()
-		ax.bar_label(rect1, horizontalalignment = 'center', verticalalignment = 'bottom')
-		ax.bar_label(rect2, horizontalalignment = 'center', verticalalignment = 'bottom')
-		ax.bar_label(rect3, horizontalalignment = 'center', verticalalignment = 'bottom')
-		ax.ticklabel_format(axis = 'y', style='plain')
+		ax.bar_label(rect1, horizontalalignment = 'center', verticalalignment = 'bottom', fmt = '%g')
+		ax.bar_label(rect2, horizontalalignment = 'center', verticalalignment = 'bottom', fmt = '%g')
+		ax.bar_label(rect3, horizontalalignment = 'center', verticalalignment = 'bottom', fmt = '%g')
+		#ax.ticklabel_format(axis = 'y', style = 'plain')
 		return fig
 		
+def get_xticks(data, num):
+	# create num ticks samples evenly spaced from 0 to len(data) - 1 
+	if (len(data) < num):
+		ticks = np.linspace(start = 0, stop = len(data) - 1, num = len(data))
+	else:
+		ticks = np.linspace(start = 0, stop = len(data) - 1, num = num)
+	return ticks
+	
+def	get_labels(data, ticks):
+	# create labels for each xticks
+	labels = []
+	for tick in ticks:
+		labels.append(data[int(tick)])
+	return labels
+	
+def place_text_in_charts(ticks, data):
+	for tick in ticks:
+		plt.text(x = tick, y = data[int(tick)], s = str(int(data[int(tick)])),\
+		horizontalalignment = 'center', verticalalignment = 'bottom')
+	
 def plot_line_1data(xdata, ydata, xlabel, ylabel):
 	screenSize = get_screen_size()
 	fig = plt.figure(figsize = [screenSize[0]/100, screenSize[1]/100])
 	plt.plot(ydata)
 	plt.xlabel(xlabel)
 	plt.ylabel(ylabel)
-	plt.xticks(ticks = np.linspace(start = 0, stop = len(xdata) - 1, num = 8), \
-			  labels = [xdata[0], xdata[math.floor(len(xdata)/7)] , xdata[2*math.floor(len(xdata)/7)],\
-			  xdata[3*math.floor(len(xdata)/7)], xdata[4*math.floor(len(xdata)/7)], xdata[5*math.floor(len(xdata)/7)],\
-			  xdata[6*math.floor(len(xdata)/7)], xdata[len(xdata)-1]])
-	plt.text(x = len(xdata) - 1, y = ydata[len(ydata) - 1], s = str(int(ydata[len(ydata) - 1])), horizontalalignment = 'center', verticalalignment = 'bottom')
+	xticks = get_xticks(data = xdata, num = 8)
+	plt.xticks(ticks = xticks, labels = get_labels(xdata, xticks))
+	place_text_in_charts(ticks = xticks, data = ydata)
 	if (max(ydata) != ydata[len(ydata) - 1]):
 		plt.text(x = ydata.index(max(ydata)), y = max(ydata), s = "MAX: "+str(int(ydata[ydata.index(max(ydata))])),\
 		horizontalalignment = 'center', verticalalignment = 'bottom')
@@ -177,35 +196,51 @@ def plot_line_2data(xdata1, xdata2, ydata1, ydata2, xlabel, ylabel1, ylabel2):
 	if (len(ydata1) == len(ydata2)):
 		plt.plot(ydata1)
 		plt.plot(ydata2)
-		plt.xticks(ticks = np.linspace(start = 0, stop = len(xdata1) - 1, num = 8), \
-				   labels = [xdata1[0], xdata1[math.floor(len(xdata1)/7)] , xdata1[2*math.floor(len(xdata1)/7)],\
-				   xdata1[3*math.floor(len(xdata1)/7)], xdata1[4*math.floor(len(xdata1)/7)], xdata1[5*math.floor(len(xdata1)/7)],\
-				   xdata1[6*math.floor(len(xdata1)/7)], xdata1[len(xdata1)-1]])
+		xticks = get_xticks(data = xdata1, num = 8)
+		plt.xticks(ticks = xticks, labels = get_labels(xdata1, xticks))
 	
 	if (len(ydata1) > len(ydata2)):
 		plt.plot(ydata1)
 		initial_zeros = list(np.zeros(len(ydata1) - len(ydata2)))
 		plt.plot(initial_zeros.extend(ydata2))
-		plt.xticks(ticks = np.linspace(start = 0, stop = len(xdata1) - 1, num = 8), \
-				   labels = [xdata1[0], xdata1[math.floor(len(xdata1)/7)] , xdata1[2*math.floor(len(xdata1)/7)],\
-				   xdata1[3*math.floor(len(xdata1)/7)], xdata1[4*math.floor(len(xdata1)/7)], xdata1[5*math.floor(len(xdata1)/7)],\
-				   xdata1[6*math.floor(len(xdata1)/7)], xdata1[len(xdata1)-1]])
+		xticks = get_xticks(data = xdata1, num = 8)
+		plt.xticks(ticks = xticks, labels = get_labels(xdata1, xticks))
 	
 	if (len(ydata2) > len(ydata1)):
 		plt.plot(ydata2)
 		initial_zeros = list(np.zeros(len(ydata2) - len(ydata1)))
 		plt.plot(initial_zeros.extend(ydata1))
-		plt.xticks(ticks = np.linspace(start = 0, stop = len(xdata2) - 1, num = 8), \
-			       labels = [xdata2[0], xdata2[math.floor(len(xdata2)/7)] , xdata2[2*math.floor(len(xdata2)/7)],\
-			       xdata2[3*math.floor(len(xdata2)/7)], xdata2[4*math.floor(len(xdata2)/7)], xdata2[5*math.floor(len(xdata2)/7)],\
-			       xdata2[6*math.floor(len(xdata2)/7)], xdata2[len(xdata2)-1]])
+		xticks = get_xticks(data = xdata2, num = 8)
+		plt.xticks(ticks = xticks, labels = get_labels(xdata2, xticks))
 	
-	plt.text(x = len(ydata1) - 1, y = ydata1[len(ydata1) - 1], s = str(int(ydata1[len(ydata1) - 1])), horizontalalignment = 'center', verticalalignment = 'bottom')
-	plt.text(x = len(ydata2) - 1, y = ydata2[len(ydata2) - 1], s = str(int(ydata2[len(ydata2) - 1])), horizontalalignment = 'center', verticalalignment = 'bottom')
+	place_text_in_charts(ticks = xticks, data = ydata1)
+	place_text_in_charts(ticks = xticks, data = ydata2)
 	plt.xlabel(xlabel)
 	plt.ylabel(ylabel1 + ", " + ylabel2)
 	plt.legend([ylabel1, ylabel2])
 	return fig
+	
+def plot_stacked_bar(xdata, ydata1, ydata2, xlabel, ylabel1, ylabel2):
+	if (ydata1 == None or ydata2 == None):
+		return None
+	else:
+		bar_width = 0.8  # width of the bar
+		# get screen size to plot graphs full screen
+		screenSize = get_screen_size()
+		fig, ax = plt.subplots(figsize = [screenSize[0]/100, screenSize[1]/100])
+		rect1 = ax.bar(x = np.arange(len(xdata)), height = ydata1, width = bar_width, label = ylabel1)
+		rect2 = ax.bar(x = np.arange(len(xdata)), height = ydata2, width = bar_width, label = ylabel2, bottom = ydata1)
+		ax.set_xlabel(xlabel)
+		ax.set_ylabel(ylabel1 + ", " + ylabel2)
+		ax.set_xticks(get_xticks(data = xdata, num = 8))
+		ax.set_xticklabels(get_labels(data = xdata, ticks = get_xticks(data = xdata, num = 8)))
+		ax.legend()
+		ax.text(x = len(xdata), y = ydata1[len(xdata) - 1], s = str(int(ydata1[len(xdata) - 1])))
+		ax.text(x = len(xdata), y = ydata1[len(xdata) - 1] + ydata2[len(xdata) - 1], s = str(int(ydata1[len(xdata) - 1] + ydata2[len(xdata) - 1])))
+		#ax.bar_label(rect1, horizontalalignment = 'center', verticalalignment = 'bottom', fmt = '%g')
+		#ax.bar_label(rect2, horizontalalignment = 'center', verticalalignment = 'bottom', fmt = '%g')
+		#ax.ticklabel_format(axis = 'y', style = 'plain')
+		return fig
 	
 def	create_destination_folder(folder_name):
 	# create destination folder to save figures
@@ -253,7 +288,7 @@ def main():
 			ydata = get_data_list(vaccini_summary_latest, i)
 			
 			# plot data for each area
-			figure = plot_bar_1data('area', metadata_vaccini_summary_latest[i], xdata, ydata)
+			figure = plot_bar_1data(xdata, ydata, 'area', metadata_vaccini_summary_latest[i])
 			count = save_figure(figure_name = "area-" + metadata_vaccini_summary_latest[i] + ".png",\
 					latest_update = latest_update, figure = figure, count = count)
 			
@@ -269,51 +304,56 @@ def main():
 		ydata = get_data_list(anagrafica_vaccini, i)
 		
 		# plot data for each age group
-		figure = (plot_bar_1data('fascia_anagrafica', metadata_anagrafica_vaccini[i], xdata, ydata))
+		figure = plot_bar_1data(xdata, ydata, 'fascia_anagrafica', metadata_anagrafica_vaccini[i])
 		count = save_figure(figure_name = "fascia_anagrafica-" + metadata_anagrafica_vaccini[i] + ".png",\
 					latest_update = latest_update, figure = figure, count = count)	
 		
-	# get total vaccinations for male and female
+	# get total vaccinations for male and female for each age group
 	xdata = get_string_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'fascia_anagrafica'))	
-	ydata1 = get_data_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'sesso_maschile'))
-	ydata2 = get_data_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'sesso_femminile'))
+	total_vaccination_male = get_data_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'sesso_maschile'))
+	total_vaccination_female = get_data_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'sesso_femminile'))
 	
 	# plot total vaccinations for male and female
-	figure = plot_bar_2data('fascia_anagrafica', 'sesso_maschile', 'sesso_femminile', xdata, ydata1, ydata2)
+	figure = plot_bar_2data(xdata, total_vaccination_male, total_vaccination_female, \
+							'fascia_anagrafica', 'sesso_maschile', 'sesso_femminile')
 	count = save_figure(figure_name = "fascia_anagrafica-sesso_maschile-sesso_femminile.png",\
 					latest_update = latest_update, figure = figure, count = count)	
 	
 	# get first and second doses for each age group
 	xdata = get_string_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'fascia_anagrafica'))	
-	ydata1 = get_data_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'prima_dose'))
-	ydata2 = get_data_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'seconda_dose'))
+	total_first_doses = get_data_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'prima_dose'))
+	total_second_doses = get_data_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'seconda_dose'))
 	
 	# plot first and second doses for each age group
-	figure = plot_bar_2data('fascia_anagrafica', 'prima_dose', 'seconda_dose', xdata, ydata1, ydata2)
+	figure = plot_bar_2data(xdata, total_first_doses, total_second_doses, 'fascia_anagrafica', 'prima_dose', 'seconda_dose')
 	count = save_figure(figure_name = "fascia_anagrafica-prima_dose-seconda_dose.png",\
 					latest_update = latest_update, figure = figure, count = count)	
 	
 	# get total vaccinations for social health workers, non-health personnel and guests of residential care homes
 	xdata = get_string_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'fascia_anagrafica'))	
-	ydata1 = get_data_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'categoria_operatori_sanitari_sociosanitari'))
-	ydata2 = get_data_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'categoria_personale_non_sanitario'))
-	ydata3 = get_data_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'categoria_ospiti_rsa'))
+	total_vaccination_social_health_workers = get_data_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'categoria_operatori_sanitari_sociosanitari'))
+	total_vaccination_non_health_personnel = get_data_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'categoria_personale_non_sanitario'))
+	total_vaccination_guests_residential_care_home = get_data_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'categoria_ospiti_rsa'))
 	
 	# plot total vaccinations for social health workers, non-health personnel and guests of residential care homes
-	figure = plot_bar_3data('fascia_anagrafica', 'categoria_operatori_sanitari_sociosanitari', 'categoria_personale_non_sanitario', 'categoria_ospiti_rsa', xdata, ydata1, ydata2, ydata3)
+	figure = plot_bar_3data(xdata, total_vaccination_social_health_workers, \
+							total_vaccination_non_health_personnel, total_vaccination_guests_residential_care_home,\
+							'fascia_anagrafica', 'categoria_operatori_sanitari_sociosanitari', 'categoria_personale_non_sanitario', 'categoria_ospiti_rsa', )
 	count = save_figure(figure_name = "fascia_anagrafica-categoria_operatori_sanitari_sociosanitari-categoria_personale_non_sanitario-categoria_ospiti_rsa.png",\
-					latest_update = latest_update, figure = figure, count = count)	
+						latest_update = latest_update, figure = figure, count = count)	
 	
 	# get total vaccinations for other people, armed forces and school personnel
 	xdata = get_string_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'fascia_anagrafica'))	
-	ydata1 = get_data_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'categoria_altro'))
-	ydata2 = get_data_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'categoria_forze_armate'))
-	ydata3 = get_data_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'categoria_personale_scolastico'))
+	total_vaccination_other_people = get_data_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'categoria_altro'))
+	total_vaccination_armed_forces = get_data_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'categoria_forze_armate'))
+	total_vaccination_school_personnel = get_data_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'categoria_personale_scolastico'))
 	
 	# plot total vaccinations for other people, armed forces and school personnel
-	figure = plot_bar_3data('fascia_anagrafica', 'categoria_altro', 'categoria_forze_armate', 'categoria_personale_scolastico', xdata, ydata1, ydata2, ydata3)
+	figure = plot_bar_3data(xdata, total_vaccination_other_people, \
+							total_vaccination_armed_forces, total_vaccination_school_personnel,\
+							'fascia_anagrafica', 'categoria_altro', 'categoria_forze_armate', 'categoria_personale_scolastico')
 	count = save_figure(figure_name = "fascia_anagrafica-categoria_altro-categoria_forze_armate-categoria_personale_scolastico.png",\
-					latest_update = latest_update, figure = figure, count = count)	
+						latest_update = latest_update, figure = figure, count = count)	
 					
 	# read somministrazioni-vaccini-latest.csv
 	somministrazioni_vaccini, metadata_somministrazioni_vaccini = csv_reader('somministrazioni-vaccini-latest.csv')
@@ -397,28 +437,38 @@ def main():
 	first_doses_italy = []
 	days_first_doses_italy = []
 	for i in range(1, len(somministrazioni_vaccini)):
-			first_doses_italy, days_first_doses_italy = get_cumulative_data(data = first_doses_italy, \
-														  new_element = float(somministrazioni_vaccini[i][get_index_from_column_name(metadata_somministrazioni_vaccini, "prima_dose")]),\
-														  days = days_first_doses_italy,\
-														  day_of_administration = somministrazioni_vaccini[i][get_index_from_column_name(metadata_somministrazioni_vaccini, "data_somministrazione")])
-		
+		first_doses_italy, days_first_doses_italy = get_cumulative_data(data = first_doses_italy, \
+													  new_element = float(somministrazioni_vaccini[i][get_index_from_column_name(metadata_somministrazioni_vaccini, "prima_dose")]),\
+													  days = days_first_doses_italy,\
+													  day_of_administration = somministrazioni_vaccini[i][get_index_from_column_name(metadata_somministrazioni_vaccini, "data_somministrazione")])
+	
 	# get total second doses over time
 	second_doses_italy = []
 	days_second_doses_italy = []
 	for i in range(1, len(somministrazioni_vaccini)):
-			second_doses_italy, days_second_doses_italy = get_cumulative_data(data = second_doses_italy, \
-														  new_element = float(somministrazioni_vaccini[i][get_index_from_column_name(metadata_somministrazioni_vaccini, "seconda_dose")]),\
-														  days = days_second_doses_italy, \
-														  day_of_administration = somministrazioni_vaccini[i][get_index_from_column_name(metadata_somministrazioni_vaccini, "data_somministrazione")])
-	
+		second_doses_italy, days_second_doses_italy = get_cumulative_data(data = second_doses_italy, \
+													  new_element = float(somministrazioni_vaccini[i][get_index_from_column_name(metadata_somministrazioni_vaccini, "seconda_dose")]),\
+													  days = days_second_doses_italy, \
+													  day_of_administration = somministrazioni_vaccini[i][get_index_from_column_name(metadata_somministrazioni_vaccini, "data_somministrazione")])
+
 	# plot total first and second doses administered over time
 	if ((first_doses_italy[len(first_doses_italy)-1] != 0) and (second_doses_italy[len(second_doses_italy)-1] != 0)):
-			figure = plot_line_2data(xdata1 = days_first_doses_italy, xdata2 = days_second_doses_italy,\
-									 ydata1 = first_doses_italy, ydata2 = second_doses_italy,\
-									 xlabel = 'Giorni', ylabel1 = 'prima dose', ylabel2 = 'seconda dose')
-			count = save_figure(figure_name = "giorni-prima_dose-seconda_dose.png",\
-					latest_update = latest_update, figure = figure, count = count)	
-		
+		figure = plot_line_2data(xdata1 = days_first_doses_italy, xdata2 = days_second_doses_italy,\
+								 ydata1 = first_doses_italy, ydata2 = second_doses_italy,\
+								 xlabel = 'Giorni', ylabel1 = 'prima dose', ylabel2 = 'seconda dose')
+								 
+		count = save_figure(figure_name = "giorni-prima_dose-seconda_dose.png",\
+							latest_update = latest_update, figure = figure, count = count)	
+	
+		figure = plot_stacked_bar(xdata = days_first_doses_italy,\
+								  ydata1 = first_doses_italy,\
+								  ydata2 = second_doses_italy,\
+								  xlabel = 'Giorni',\
+								  ylabel1 = 'prima dose',\
+								  ylabel2 = 'seconda dose')
+								  
+		count = save_figure(figure_name = "giorni-prima_dose-seconda_dose-barre.png",\
+								latest_update = latest_update, figure = figure, count = count)	
 	
 	
 	if SAVING_CHARTS_ENABLED:
@@ -430,8 +480,11 @@ def main():
 	if (readme_autoupdate.create_readme(latest_update) == True):
 		print("README.md updated.")
 		
-	if (twitter.post_tweet(latest_update, total_doses_administered, total_doses_delivered, doses_administered_today) == True):
-		print("Your tweet has been posted.")
+	if (gitignore_autoupdate.update_gitignore(file_name = ".gitignore", latest_update = latest_update) == True):
+		print (".gitignore updated.")
+		
+	#if (twitter.post_tweet(latest_update, total_doses_administered, total_doses_delivered, doses_administered_today) == True):
+	#	print("Your tweet has been posted.")
 	
 if __name__ == "__main__":
     main()

@@ -9,6 +9,7 @@ def get_twitter_key(file_name):
 	consumer_secret = file.readline()		# API key secret	
 	access_token = file.readline()			# access token
 	access_token_secret = file.readline()	# access token secret
+	file.close() 
 	return consumer_key.rstrip("\n"), consumer_secret.rstrip("\n"), access_token.rstrip("\n"), access_token_secret.rstrip("\n")
 	
 

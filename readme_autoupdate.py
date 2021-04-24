@@ -25,6 +25,6 @@ def readme_update(readme_name, base_readme, latest_update):
 	readme.close
 	
 def create_readme(latest_update):
-	base_readme = read_base_readme("base_readme.md")
+	base_readme = read_base_readme("base_readme.txt")
 	readme_update("README.md", base_readme, latest_update)
 	return True
