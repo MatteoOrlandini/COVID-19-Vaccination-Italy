@@ -24,7 +24,7 @@ def readme_update(readme_name, base_readme, latest_update):
 		readme.write("![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/"+latest_update+"/"+file.name.replace(' ','%20')+")\n\n")
 	readme.close
 	
-def create_readme(latest_update):
-	base_readme = read_base_readme("base_readme.txt")
+def create_readme(base_readme_file_name, latest_update):
+	base_readme = read_base_readme(base_readme_file_name)
 	readme_update("README.md", base_readme, latest_update)
 	return True

@@ -31,28 +31,40 @@ def start_thread(api, latest_update, total_doses_administered, total_doses_deliv
 			  +"#vaccinareh24\n"\
 			  +"#vaccinoAntiCovid\n"\
 			  +"1/n"
-			  
-	original_tweet = api.update_status(status = message)
+	file_names = os.scandir("./Charts/" + latest_update)
+	media_ids = []
+	for file_name in file_names:
+		res = api.media_upload(file_name)
+		media_ids.append(res.media_id)
+		if (len(media_ids) == 4):
+			original_tweet = api.update_status(status = message, media_ids = media_ids)
 	return(original_tweet)
 
 def update_thread(api, latest_update, reply_tweet):
 	file_names = os.scandir("./Charts/" + latest_update)
 	media_ids = []
 	j = 0
-	i = 2
+	i = 1
 	for file_name in file_names:
 		res = api.media_upload(file_name)
 		media_ids.append(res.media_id)
 		if (len(media_ids) == 4):
-			reply_tweet = api.update_status(status = str(i)+"/n", \
-							  media_ids = media_ids, \
-							  in_reply_to_status_id = reply_tweet.id, \
-							  auto_populate_reply_metadata = True)
+			if (i > 1):
+				reply_tweet = api.update_status(status = str(i)+"/n", \
+								  media_ids = media_ids, \
+								  in_reply_to_status_id = reply_tweet.id, \
+								  auto_populate_reply_metadata = True)
 			i += 1			
 			media_ids = []
+			
+	if (len(media_ids) > 1):
+				reply_tweet = api.update_status(status = str(i)+"/n", \
+								  media_ids = media_ids, \
+								  in_reply_to_status_id = reply_tweet.id, \
+								  auto_populate_reply_metadata = True)
 	  
-def post_tweet(latest_update, total_doses_administered, total_doses_delivered, doses_administered_today):
-	consumer_key, consumer_secret, access_token, access_token_secret = get_twitter_key("twitter_key.txt")
+def post_tweet(twitter_key_file_name, latest_update, total_doses_administered, total_doses_delivered, doses_administered_today):
+	consumer_key, consumer_secret, access_token, access_token_secret = get_twitter_key(twitter_key_file_name)
 	
 	api = get_api(consumer_key, consumer_secret, access_token, access_token_secret)
 				  

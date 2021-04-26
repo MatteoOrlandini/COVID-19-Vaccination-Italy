@@ -477,14 +477,14 @@ def main():
 	if SHOW_CHARTS_ENABLED:
 		plt.show()
 		
-	if (readme_autoupdate.create_readme(latest_update) == True):
+	if (readme_autoupdate.create_readme("base_readme.txt", latest_update) == True):
 		print("README.md updated.")
 		
-	if (gitignore_autoupdate.update_gitignore(file_name = ".gitignore", latest_update = latest_update) == True):
+	if (gitignore_autoupdate.update_gitignore(".gitignore", latest_update) == True):
 		print (".gitignore updated.")
 		
-	#if (twitter.post_tweet(latest_update, total_doses_administered, total_doses_delivered, doses_administered_today) == True):
-	#	print("Your tweet has been posted.")
+	if (twitter.post_tweet("twitter_key.txt", latest_update, total_doses_administered, total_doses_delivered, doses_administered_today) == True):
+		print("Your tweet has been posted.")
 	
 if __name__ == "__main__":
     main()
