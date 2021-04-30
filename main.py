@@ -483,8 +483,8 @@ def main():
 	if (gitignore_autoupdate.update_gitignore(".gitignore", latest_update) == True):
 		print (".gitignore updated.")
 		
-	if (twitter.post_tweet("twitter_key.txt", latest_update, total_doses_administered, total_doses_delivered, doses_administered_today) == True):
-		print("Your tweet has been posted.")
+	tweet_link = twitter.post_tweet("twitter_key.txt", latest_update, total_doses_administered, total_doses_delivered, doses_administered_today)
+	print("Your tweet has been posted: ", tweet_link)
 	
 if __name__ == "__main__":
     main()

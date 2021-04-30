@@ -44,24 +44,30 @@ def update_thread(api, latest_update, reply_tweet):
 	file_names = os.scandir("./Charts/" + latest_update)
 	media_ids = []
 	j = 0
-	i = 1
+	number_of_reply = 1
 	for file_name in file_names:
 		res = api.media_upload(file_name)
 		media_ids.append(res.media_id)
 		if (len(media_ids) == 4):
-			if (i > 1):
-				reply_tweet = api.update_status(status = str(i)+"/n", \
+			if (number_of_reply > 1):
+				reply_tweet = api.update_status(status = str(number_of_reply)+"/n", \
 								  media_ids = media_ids, \
 								  in_reply_to_status_id = reply_tweet.id, \
 								  auto_populate_reply_metadata = True)
-			i += 1			
+			number_of_reply += 1			
 			media_ids = []
 			
 	if (len(media_ids) > 1):
-				reply_tweet = api.update_status(status = str(i)+"/n", \
+				reply_tweet = api.update_status(status = str(number_of_reply)+"/n", \
 								  media_ids = media_ids, \
 								  in_reply_to_status_id = reply_tweet.id, \
 								  auto_populate_reply_metadata = True)
+	return number_of_reply
+								  
+def	get_tweet_link(api, id, number_of_reply):
+	tweets = api.user_timeline(id = id)
+	id = tweets[number_of_reply - 1].id
+	return "https://twitter.com/i/web/status/"+str(id)
 	  
 def post_tweet(twitter_key_file_name, latest_update, total_doses_administered, total_doses_delivered, doses_administered_today):
 	consumer_key, consumer_secret, access_token, access_token_secret = get_twitter_key(twitter_key_file_name)
@@ -70,6 +76,6 @@ def post_tweet(twitter_key_file_name, latest_update, total_doses_administered, t
 				  
 	tweet = start_thread(api, latest_update, str(total_doses_administered), str(total_doses_delivered), str(doses_administered_today))
 	
-	update_thread(api, latest_update, tweet)
+	number_of_reply = update_thread(api, latest_update, tweet)
 	
-	return True
+	return get_tweet_link(api, "VacciniCovidITA", number_of_reply)
