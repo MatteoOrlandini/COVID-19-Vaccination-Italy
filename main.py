@@ -1,12 +1,12 @@
+import csv
+import ctypes  # to get screen size
+import os
 import urllib.request
+
+import gitignore_autoupdate
 import matplotlib.pyplot as plt
 import numpy as np
-import csv
-import ctypes # to get screen size
-import os
-import math
 import readme_autoupdate
-import gitignore_autoupdate
 import twitter
 
 # set SHOW_CHARTS_ENABLED = 1 to show all the charts
@@ -484,7 +484,7 @@ def main():
 		print (".gitignore updated.")
 		
 	tweet_link = twitter.post_tweet("twitter_key.txt", latest_update, total_doses_administered, total_doses_delivered, doses_administered_today)
-	print("Your tweet has been posted: ", tweet_link)
+	print("Your tweet has been posted: " + str(tweet_link))
 	
 if __name__ == "__main__":
     main()
