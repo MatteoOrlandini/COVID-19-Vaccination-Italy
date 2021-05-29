@@ -24,7 +24,7 @@ def download(fileName, url):
 	print('CSV dataset \"'+fileName+'\" downloaded')
 
 def csv_reader(fileName):	
-	with open(fileName, mode='r') as csv_file:
+	with open(fileName, mode = 'r') as csv_file:
 		csv_reader = csv.reader(csv_file, delimiter = ',')
 		line_count = 0
 		list = []
@@ -33,22 +33,22 @@ def csv_reader(fileName):
 				# join all items in a tuple into a string, using a ", " character as separator:
 				column_names = ", ".join(row)
 				metadata = column_names.split(", ")
-				#print(f'Column names are {", ".join(row)}')
+				# print(f'Column names are {", ".join(row)}')
 				line_count += 1
-				list.append(row)
+				# list.append(row)
 			else:
 				# append row to the list
 				list.append(row)
-				line_count += 1
-		#print(f'Processed {line_count} lines.')
-		return list, metadata
+				# line_count += 1
+		#print(f'Processed {line_count} lines.')	
+	return list, metadata
 	
 def sum_data(list, metadata, dataType):
 	total = 0
 	for i in range (0, len (metadata)):
 		if (metadata[i] == dataType):
 			index = i
-	for i in range (1, len (list)):
+	for i in range (0, len (list)):
 		total += int(list[i][index])
 	return total
 
@@ -58,15 +58,15 @@ def get_screen_size():
 	return screensize
 
 def get_string_list(list, column_index):
-	data = [list[1][column_index]] # initialize list
-	for i in range (2, len (list)):	
+	data = [list[0][column_index]] # initialize list
+	for i in range (1, len (list)):	
 		if list[i][column_index] not in data:
 			data.append(list[i][column_index])
 	return data
 	
 def get_data_list(list, column_index):
 	data = [] # initialize list
-	for i in range (1, len (list)):
+	for i in range (0, len (list)):
 		try:
 			data.append(float(list[i][column_index]))
 		except ValueError as e:
@@ -97,67 +97,9 @@ def get_index_from_column_name(metadata, column_name):
 	for i in range (0, len(metadata)):
 		if (metadata[i] == column_name):
 			return i
-					
-def plot_bar_1data(xdata, ydata, xlabel, ylabel):
-	if (ydata == None):
-		return None
-	else:
-		# get screen size to plot graphs full screen
-		screenSize = get_screen_size()
-		fig, ax = plt.subplots(figsize = [screenSize[0]/100, screenSize[1]/100])
-		rect = ax.bar(np.arange(len(xdata)), ydata, label = ylabel)
-		ax.set_xlabel(xlabel)
-		ax.set_ylabel(ylabel)
-		ax.set_xticks(np.arange(len(xdata)))
-		ax.set_xticklabels(xdata)
-		ax.bar_label(rect, horizontalalignment = 'center', verticalalignment = 'bottom', fmt = '%g')
-		#ax.ticklabel_format(axis = 'y', style = 'plain')
-		return fig 
 	
-def plot_bar_2data(xdata, ydata1, ydata2, xlabel, ylabel1, ylabel2):
-	if (ydata1 == None or ydata2 == None):
-		return None
-	else:
-		bar_width = 0.35  # width of the bar
-		# get screen size to plot graphs full screen
-		screenSize = get_screen_size()
-		fig, ax = plt.subplots(figsize = [screenSize[0]/100, screenSize[1]/100])
-		rect1 = ax.bar(np.arange(len(xdata)) - bar_width/2, ydata1, bar_width, label = ylabel1)
-		rect2 = ax.bar(np.arange(len(xdata)) + bar_width/2, ydata2, bar_width, label = ylabel2)
-		ax.set_xlabel(xlabel)
-		ax.set_ylabel(ylabel1 + ", " + ylabel2)
-		ax.set_xticks(np.arange(len(xdata)))
-		ax.set_xticklabels(xdata)
-		ax.legend()
-		ax.bar_label(rect1, horizontalalignment = 'center', verticalalignment = 'bottom', fmt = '%g')
-		ax.bar_label(rect2, horizontalalignment = 'center', verticalalignment = 'bottom', fmt = '%g')
-		#ax.ticklabel_format(axis = 'y', style = 'plain')
-		return fig
-	
-def plot_bar_3data(xdata, ydata1, ydata2, ydata3, xlabel, ylabel1, ylabel2, ylabel3):
-	if (ydata1 == None or ydata2 == None or ydata3 == None):
-		return None
-	else:
-		bar_width = 0.25  # width of the bar
-		# get screen size to plot graphs full screen
-		screenSize = get_screen_size()
-		fig, ax = plt.subplots(figsize = [screenSize[0]/100, screenSize[1]/100])
-		rect1 = ax.bar(np.arange(len(xdata)) - bar_width, ydata1, bar_width, label = ylabel1)
-		rect2 = ax.bar(np.arange(len(xdata)), ydata2, bar_width, label = ylabel2)
-		rect3 = ax.bar(np.arange(len(xdata)) + bar_width, ydata3, bar_width, label = ylabel3)
-		ax.set_xlabel(xlabel)
-		ax.set_ylabel(ylabel1 + ", " + ylabel2 + ", " + ylabel3)
-		ax.set_xticks(np.arange(len(xdata)))
-		ax.set_xticklabels(xdata)
-		ax.legend()
-		ax.bar_label(rect1, horizontalalignment = 'center', verticalalignment = 'bottom', fmt = '%g')
-		ax.bar_label(rect2, horizontalalignment = 'center', verticalalignment = 'bottom', fmt = '%g')
-		ax.bar_label(rect3, horizontalalignment = 'center', verticalalignment = 'bottom', fmt = '%g')
-		#ax.ticklabel_format(axis = 'y', style = 'plain')
-		return fig
-		
 def get_xticks(data, num):
-	# create num ticks samples evenly spaced from 0 to len(data) - 1 
+	# create num ticks samples evenly spaced from 0 to len(data)
 	if (len(data) < num):
 		ticks = np.linspace(start = 0, stop = len(data) - 1, num = len(data))
 	else:
@@ -170,6 +112,27 @@ def	get_labels(data, ticks):
 	for tick in ticks:
 		labels.append(data[int(tick)])
 	return labels
+	
+def initialize_figure(xdata, xlabel, ylabel):
+	# get screen size to plot graphs full screen
+	screenSize = get_screen_size()
+	fig, ax = plt.subplots(figsize = [screenSize[0]/100, screenSize[1]/100])
+	ax.set_xlabel(xlabel)
+	ax.set_ylabel(ylabel)
+	ticks = get_xticks(xdata, len(xdata))
+	ax.set_xticks(ticks)
+	ax.set_xticklabels(get_labels(xdata, ticks))
+	return fig, ax
+	
+def bar_plot(figure, axes, xdata, ydata, ylabel, bar_width, offset):
+	if (ydata == None):
+		return None
+	else:
+		x = get_xticks(xdata, len(xdata)) 
+		rect = axes.bar(x + offset, ydata, bar_width, label = ylabel)
+		axes.bar_label(rect, horizontalalignment = 'center', verticalalignment = 'bottom', fmt = '%g')
+		#axes.ticklabel_format(axis = 'y', style = 'plain')
+		return figure
 	
 def place_text_in_charts(ticks, data):
 	for tick in ticks:
@@ -288,10 +251,11 @@ def main():
 			ydata = get_data_list(vaccini_summary_latest, i)
 			
 			# plot data for each area
-			figure = plot_bar_1data(xdata, ydata, 'area', metadata_vaccini_summary_latest[i])
+			figure, axes = initialize_figure(xdata, 'area', metadata_vaccini_summary_latest[i])
+			figure = bar_plot(figure, axes, xdata, ydata, metadata_vaccini_summary_latest[i], 0.8, 0)
 			count = save_figure(figure_name = "area-" + metadata_vaccini_summary_latest[i] + ".png",\
 					latest_update = latest_update, figure = figure, count = count)
-			
+					
 	# read anagrafica-vaccini-summary-latest.csv
 	anagrafica_vaccini, metadata_anagrafica_vaccini = csv_reader('anagrafica-vaccini-summary-latest.csv')
 	
@@ -304,21 +268,26 @@ def main():
 		ydata = get_data_list(anagrafica_vaccini, i)
 		
 		# plot data for each age group
-		figure = plot_bar_1data(xdata, ydata, 'fascia_anagrafica', metadata_anagrafica_vaccini[i])
+		figure, axes = initialize_figure(xdata, 'fascia_anagrafica', metadata_anagrafica_vaccini[i])
+		figure = bar_plot(figure, axes, xdata, ydata, metadata_anagrafica_vaccini[i], 0.8, 0)
 		count = save_figure(figure_name = "fascia_anagrafica-" + metadata_anagrafica_vaccini[i] + ".png",\
 					latest_update = latest_update, figure = figure, count = count)	
-		
+					
 	# get total vaccinations for male and female for each age group
 	xdata = get_string_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'fascia_anagrafica'))	
 	total_vaccination_male = get_data_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'sesso_maschile'))
 	total_vaccination_female = get_data_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'sesso_femminile'))
 	
 	# plot total vaccinations for male and female
-	figure = plot_bar_2data(xdata, total_vaccination_male, total_vaccination_female, \
-							'fascia_anagrafica', 'sesso_maschile', 'sesso_femminile')
+	figure, axes = initialize_figure(xdata, 'fascia_anagrafica', 'sesso_maschile, sesso_femminile')
+	figure = bar_plot(figure, axes, xdata, total_vaccination_male, 'sesso_maschile', 0.35, 0.35/2)
+	figure = bar_plot(figure, axes, xdata, total_vaccination_female, 'sesso_femminile', 0.35, -0.35/2)	
+	axes.legend()
+	#figure = plot_bar_2data(xdata, total_vaccination_male, total_vaccination_female, \
+	#						'fascia_anagrafica', 'sesso_maschile', 'sesso_femminile')
 	count = save_figure(figure_name = "fascia_anagrafica-sesso_maschile-sesso_femminile.png",\
 					latest_update = latest_update, figure = figure, count = count)	
-	
+	'''
 	# get first and second doses for each age group
 	xdata = get_string_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'fascia_anagrafica'))	
 	total_first_doses = get_data_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'prima_dose'))
@@ -354,7 +323,8 @@ def main():
 							'fascia_anagrafica', 'categoria_altro', 'categoria_forze_armate', 'categoria_personale_scolastico')
 	count = save_figure(figure_name = "fascia_anagrafica-categoria_altro-categoria_forze_armate-categoria_personale_scolastico.png",\
 						latest_update = latest_update, figure = figure, count = count)	
-					
+	'''		
+
 	# read somministrazioni-vaccini-latest.csv
 	somministrazioni_vaccini, metadata_somministrazioni_vaccini = csv_reader('somministrazioni-vaccini-latest.csv')
 	
