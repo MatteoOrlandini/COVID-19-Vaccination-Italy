@@ -113,27 +113,28 @@ def	get_labels(data, ticks):
 		labels.append(data[int(tick)])
 	return labels
 	
-def initialize_figure(xdata, xlabel, ylabel):
+def initialize_figure(xdata, xlabel, ylabel, xticks_num):
 	# get screen size to plot graphs full screen
 	screenSize = get_screen_size()
 	fig, ax = plt.subplots(figsize = [screenSize[0]/100, screenSize[1]/100])
 	ax.set_xlabel(xlabel)
 	ax.set_ylabel(ylabel)
-	ticks = get_xticks(xdata, len(xdata))
+	ticks = get_xticks(xdata, xticks_num)
 	ax.set_xticks(ticks)
 	ax.set_xticklabels(get_labels(xdata, ticks))
 	return fig, ax
 	
-def bar_plot(figure, axes, xdata, ydata, ylabel, bar_width, offset):
+def bar_plot(figure, axes, xdata, ydata, ylabel, bar_width, offset, bottom, bar_label_enable):
 	if (ydata == None):
 		return None
 	else:
 		x = get_xticks(xdata, len(xdata)) 
-		rect = axes.bar(x + offset, ydata, bar_width, label = ylabel)
-		axes.bar_label(rect, horizontalalignment = 'center', verticalalignment = 'bottom', fmt = '%g')
+		rect = axes.bar(x + offset, ydata, bar_width, label = ylabel, bottom = bottom)
+		if (bar_label_enable == True):
+			axes.bar_label(rect, horizontalalignment = 'center', verticalalignment = 'bottom', fmt = '%g')
 		#axes.ticklabel_format(axis = 'y', style = 'plain')
 		return figure
-	
+		
 def place_text_in_charts(ticks, data):
 	for tick in ticks:
 		plt.text(x = tick, y = data[int(tick)], s = str(int(data[int(tick)])),\
@@ -183,28 +184,6 @@ def plot_line_2data(xdata1, xdata2, ydata1, ydata2, xlabel, ylabel1, ylabel2):
 	plt.legend([ylabel1, ylabel2])
 	return fig
 	
-def plot_stacked_bar(xdata, ydata1, ydata2, xlabel, ylabel1, ylabel2):
-	if (ydata1 == None or ydata2 == None):
-		return None
-	else:
-		bar_width = 0.8  # width of the bar
-		# get screen size to plot graphs full screen
-		screenSize = get_screen_size()
-		fig, ax = plt.subplots(figsize = [screenSize[0]/100, screenSize[1]/100])
-		rect1 = ax.bar(x = np.arange(len(xdata)), height = ydata1, width = bar_width, label = ylabel1)
-		rect2 = ax.bar(x = np.arange(len(xdata)), height = ydata2, width = bar_width, label = ylabel2, bottom = ydata1)
-		ax.set_xlabel(xlabel)
-		ax.set_ylabel(ylabel1 + ", " + ylabel2)
-		ax.set_xticks(get_xticks(data = xdata, num = 8))
-		ax.set_xticklabels(get_labels(data = xdata, ticks = get_xticks(data = xdata, num = 8)))
-		ax.legend()
-		ax.text(x = len(xdata), y = ydata1[len(xdata) - 1], s = str(int(ydata1[len(xdata) - 1])))
-		ax.text(x = len(xdata), y = ydata1[len(xdata) - 1] + ydata2[len(xdata) - 1], s = str(int(ydata1[len(xdata) - 1] + ydata2[len(xdata) - 1])))
-		#ax.bar_label(rect1, horizontalalignment = 'center', verticalalignment = 'bottom', fmt = '%g')
-		#ax.bar_label(rect2, horizontalalignment = 'center', verticalalignment = 'bottom', fmt = '%g')
-		#ax.ticklabel_format(axis = 'y', style = 'plain')
-		return fig
-	
 def	create_destination_folder(folder_name):
 	# create destination folder to save figures
 	try:
@@ -251,8 +230,8 @@ def main():
 			ydata = get_data_list(vaccini_summary_latest, i)
 			
 			# plot data for each area
-			figure, axes = initialize_figure(xdata, 'area', metadata_vaccini_summary_latest[i])
-			figure = bar_plot(figure, axes, xdata, ydata, metadata_vaccini_summary_latest[i], 0.8, 0)
+			figure, axes = initialize_figure(xdata, 'area', metadata_vaccini_summary_latest[i], len(xdata))
+			figure = bar_plot(figure, axes, xdata, ydata, metadata_vaccini_summary_latest[i], 0.8, 0, list(np.zeros(len(xdata))), True)
 			count = save_figure(figure_name = "area-" + metadata_vaccini_summary_latest[i] + ".png",\
 					latest_update = latest_update, figure = figure, count = count)
 					
@@ -268,8 +247,8 @@ def main():
 		ydata = get_data_list(anagrafica_vaccini, i)
 		
 		# plot data for each age group
-		figure, axes = initialize_figure(xdata, 'fascia_anagrafica', metadata_anagrafica_vaccini[i])
-		figure = bar_plot(figure, axes, xdata, ydata, metadata_anagrafica_vaccini[i], 0.8, 0)
+		figure, axes = initialize_figure(xdata, 'fascia_anagrafica', metadata_anagrafica_vaccini[i], len(xdata))
+		figure = bar_plot(figure, axes, xdata, ydata, metadata_anagrafica_vaccini[i], 0.8, 0, list(np.zeros(len(xdata))), True)
 		count = save_figure(figure_name = "fascia_anagrafica-" + metadata_anagrafica_vaccini[i] + ".png",\
 					latest_update = latest_update, figure = figure, count = count)	
 					
@@ -279,12 +258,10 @@ def main():
 	total_vaccination_female = get_data_list(anagrafica_vaccini, get_index_from_column_name(metadata_anagrafica_vaccini, 'sesso_femminile'))
 	
 	# plot total vaccinations for male and female
-	figure, axes = initialize_figure(xdata, 'fascia_anagrafica', 'sesso_maschile, sesso_femminile')
-	figure = bar_plot(figure, axes, xdata, total_vaccination_male, 'sesso_maschile', 0.35, 0.35/2)
-	figure = bar_plot(figure, axes, xdata, total_vaccination_female, 'sesso_femminile', 0.35, -0.35/2)	
+	figure, axes = initialize_figure(xdata, 'fascia_anagrafica', 'sesso_maschile, sesso_femminile', len(xdata))
+	figure = bar_plot(figure, axes, xdata, total_vaccination_male, 'sesso_maschile', 0.35, 0.35/2, list(np.zeros(len(xdata))), True)
+	figure = bar_plot(figure, axes, xdata, total_vaccination_female, 'sesso_femminile', 0.35, -0.35/2, list(np.zeros(len(xdata))), True)	
 	axes.legend()
-	#figure = plot_bar_2data(xdata, total_vaccination_male, total_vaccination_female, \
-	#						'fascia_anagrafica', 'sesso_maschile', 'sesso_femminile')
 	count = save_figure(figure_name = "fascia_anagrafica-sesso_maschile-sesso_femminile.png",\
 					latest_update = latest_update, figure = figure, count = count)	
 	'''
@@ -429,14 +406,18 @@ def main():
 								 
 		count = save_figure(figure_name = "giorni-prima_dose-seconda_dose.png",\
 							latest_update = latest_update, figure = figure, count = count)	
-	
-		figure = plot_stacked_bar(xdata = days_first_doses_italy,\
-								  ydata1 = first_doses_italy,\
-								  ydata2 = second_doses_italy,\
-								  xlabel = 'Giorni',\
-								  ylabel1 = 'prima dose',\
-								  ylabel2 = 'seconda dose')
-								  
+		
+		figure, axes = initialize_figure(days_first_doses_italy, 'Giorni', 'prima dose, seconda dose', len(xdata))
+		figure = bar_plot(figure, axes, days_first_doses_italy, first_doses_italy, 'prima dose', 0.8, 0, list(np.zeros(len(days_first_doses_italy))), False)
+		figure = bar_plot(figure, axes, days_first_doses_italy, second_doses_italy, 'seconda dose', 0.8, 0, first_doses_italy, False)	
+		axes.legend()
+		axes.text(x = len(days_first_doses_italy), \
+				  y = first_doses_italy[len(days_first_doses_italy) - 1], \
+				  s = str(int(first_doses_italy[len(days_first_doses_italy) - 1])))
+		axes.text(x = len(days_first_doses_italy), \
+				  y = first_doses_italy[len(days_first_doses_italy) - 1] + second_doses_italy[len(days_first_doses_italy) - 1], \
+				  s = str(int(first_doses_italy[len(days_first_doses_italy) - 1] + second_doses_italy[len(days_first_doses_italy) - 1])))
+		
 		count = save_figure(figure_name = "giorni-prima_dose-seconda_dose-barre.png",\
 								latest_update = latest_update, figure = figure, count = count)	
 	
