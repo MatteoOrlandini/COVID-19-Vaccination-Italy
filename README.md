@@ -45,27 +45,7 @@ If `SHOW_CHARTS_ENABLED = 1`, the charts are shown in the command window. If `SA
 
 Here are shown some charts that this script created on 2021-10-08.
 
-![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-10-08/2021-10-08-area-dosi_consegnate.png)
-
-![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-10-08/2021-10-08-area-dosi_somministrate.png)
-
-![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-10-08/2021-10-08-area-percentuale_somministrazione.png)
-
-![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-10-08/2021-10-08-fascia_anagrafica-dose_aggiuntiva.png)
-
-![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-10-08/2021-10-08-fascia_anagrafica-pregressa_infezione.png)
-
-![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-10-08/2021-10-08-fascia_anagrafica-prima_dose.png)
-
-![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-10-08/2021-10-08-fascia_anagrafica-seconda_dose.png)
-
-![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-10-08/2021-10-08-fascia_anagrafica-sesso_femminile.png)
-
-![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-10-08/2021-10-08-fascia_anagrafica-sesso_maschile-sesso_femminile.png)
-
-![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-10-08/2021-10-08-fascia_anagrafica-sesso_maschile.png)
-
-![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-10-08/2021-10-08-fascia_anagrafica-totale.png)
+![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-10-08/2021-10-08-giorni-dose-aggiuntiva.png)
 
 ![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-10-08/2021-10-08-giorni-dosi_giornaliere.png)
 
@@ -96,6 +76,8 @@ Here are shown some charts that this script created on 2021-10-08.
 ![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-10-08/2021-10-08-giorni-fornitore-Pfizer-BioNTech.png)
 
 ![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-10-08/2021-10-08-giorni-fornitore-Vaxzevria%20(AstraZeneca).png)
+
+![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-10-08/2021-10-08-giorni-pregressa-infezione.png)
 
 ![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-10-08/2021-10-08-giorni-prima_dose-seconda_dose-barre.png)
 

@@ -357,7 +357,7 @@ def main():
 		
 		# plot total administered doses for each age group over time
 		if (cumulative_data_italy_by_age_group[len(cumulative_data_italy_by_age_group)-1] != 0):
-			figure = plot_line_1data(xdata = days, ydata = cumulative_data_italy_by_age_group, xlabel = 'Giorni', ylabel = "Fascia anagrafica " + age_group[j])
+			figure = plot_line_1data(xdata = days, ydata = cumulative_data_italy_by_age_group, xlabel = 'Giorni', ylabel = "Dosi somministrate fascia anagrafica " + age_group[j])
 			count = save_figure(figure_name = "giorni-fascia_anagrafica-" + age_group[j] + ".png",\
 					latest_update = latest_update, figure = figure, count = count)	
 		
@@ -376,7 +376,7 @@ def main():
 		
 		# plot total administered doses for each supplier over time
 		if (cumulative_data_italy_by_supplier[len(cumulative_data_italy_by_supplier)-1] != 0):
-			figure = plot_line_1data(xdata = days, ydata = cumulative_data_italy_by_supplier, xlabel = 'Giorni', ylabel = "Fornitore " + supplier[j])
+			figure = plot_line_1data(xdata = days, ydata = cumulative_data_italy_by_supplier, xlabel = 'Giorni', ylabel = "Dosi somministrate fornitore " + supplier[j])
 			count = save_figure(figure_name = "giorni-fornitore-" + supplier[j].replace('/', '-') + ".png",\
 					latest_update = latest_update, figure = figure, count = count)	
 		
@@ -421,13 +421,40 @@ def main():
 		count = save_figure(figure_name = "giorni-prima_dose-seconda_dose-barre.png",\
 								latest_update = latest_update, figure = figure, count = count)	
 	
-	
+	# get total additional doses over time
+	additional_doses_italy = []
+	days_additional_doses_italy = []
+	for i in range(1, len(somministrazioni_vaccini)):
+		additional_doses_italy, days_additional_doses_italy = get_cumulative_data(data = additional_doses_italy, \
+													  new_element = float(somministrazioni_vaccini[i][get_index_from_column_name(metadata_somministrazioni_vaccini, "dose_aggiuntiva")]),\
+													  days = days_additional_doses_italy, \
+													  day_of_administration = somministrazioni_vaccini[i][get_index_from_column_name(metadata_somministrazioni_vaccini, "data_somministrazione")])
+	# plot total additional doses over time
+	if (additional_doses_italy[len(additional_doses_italy)-1] != 0):
+		figure = plot_line_1data(xdata = days_additional_doses_italy, ydata = additional_doses_italy, xlabel = 'Giorni', ylabel = "Dosi aggiuntive somministrate")
+		count = save_figure(figure_name = "giorni-dose-aggiuntiva.png",\
+				latest_update = latest_update, figure = figure, count = count)	
+					
+	# get previous infections over time
+	previous_infections_italy = []
+	days_previous_infections_italy = []
+	for i in range(1, len(somministrazioni_vaccini)):
+		previous_infections_italy, days_previous_infections_italy = get_cumulative_data(data = previous_infections_italy, \
+													  new_element = float(somministrazioni_vaccini[i][get_index_from_column_name(metadata_somministrazioni_vaccini, "pregressa_infezione")]),\
+													  days = days_previous_infections_italy, \
+													  day_of_administration = somministrazioni_vaccini[i][get_index_from_column_name(metadata_somministrazioni_vaccini, "data_somministrazione")])
+	# plot total previous infections over time
+	if (previous_infections_italy[len(previous_infections_italy)-1] != 0):
+		figure = plot_line_1data(xdata = days_previous_infections_italy, ydata = previous_infections_italy, xlabel = 'Giorni', ylabel = "Pregressa infezione")
+		count = save_figure(figure_name = "giorni-pregressa-infezione.png",\
+				latest_update = latest_update, figure = figure, count = count)	
+					
 	if SAVING_CHARTS_ENABLED:
 		print (count, "charts saved.")
 		
 	if SHOW_CHARTS_ENABLED:
 		plt.show()
-		
+	
 	if (readme_autoupdate.create_readme("base_readme.txt", latest_update) == True):
 		print("README.md updated.")
 		
