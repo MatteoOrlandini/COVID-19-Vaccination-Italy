@@ -426,7 +426,7 @@ def main():
 	days_additional_doses_italy = []
 	for i in range(1, len(somministrazioni_vaccini)):
 		additional_doses_italy, days_additional_doses_italy = get_cumulative_data(data = additional_doses_italy, \
-													  new_element = float(somministrazioni_vaccini[i][get_index_from_column_name(metadata_somministrazioni_vaccini, "dose_aggiuntiva")]),\
+													  new_element = float(somministrazioni_vaccini[i][get_index_from_column_name(metadata_somministrazioni_vaccini, "dose_addizionale_booster")]),\
 													  days = days_additional_doses_italy, \
 													  day_of_administration = somministrazioni_vaccini[i][get_index_from_column_name(metadata_somministrazioni_vaccini, "data_somministrazione")])
 	# plot total additional doses over time
