@@ -43,43 +43,65 @@ The charts are saved in [Charts](https://github.com/MatteoOrlandini/COVID-19-Vac
 ## Charts
 If `SHOW_CHARTS_ENABLED = 1`, the charts are shown in the command window. If `SAVING_CHARTS_ENABLED = 0`, the charts will not be saved.
 
-Here are shown some charts that this script created on 2021-12-05.
+Here are shown some charts that this script created on 2021-12-06.
 
-![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-05/2021-12-05-giorni-dose-aggiuntiva.png)
+![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-06/2021-12-06-area-dosi_consegnate.png)
 
-![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-05/2021-12-05-giorni-dosi_giornaliere.png)
+![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-06/2021-12-06-area-dosi_somministrate.png)
 
-![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-05/2021-12-05-giorni-dosi_totali.png)
+![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-06/2021-12-06-area-percentuale_somministrazione.png)
 
-![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-05/2021-12-05-giorni-fascia_anagrafica-12-19.png)
+![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-06/2021-12-06-fascia_anagrafica-dose_addizionale_booster.png)
 
-![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-05/2021-12-05-giorni-fascia_anagrafica-20-29.png)
+![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-06/2021-12-06-fascia_anagrafica-pregressa_infezione.png)
 
-![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-05/2021-12-05-giorni-fascia_anagrafica-30-39.png)
+![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-06/2021-12-06-fascia_anagrafica-prima_dose.png)
 
-![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-05/2021-12-05-giorni-fascia_anagrafica-40-49.png)
+![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-06/2021-12-06-fascia_anagrafica-seconda_dose.png)
 
-![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-05/2021-12-05-giorni-fascia_anagrafica-50-59.png)
+![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-06/2021-12-06-fascia_anagrafica-sesso_femminile.png)
 
-![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-05/2021-12-05-giorni-fascia_anagrafica-60-69.png)
+![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-06/2021-12-06-fascia_anagrafica-sesso_maschile-sesso_femminile.png)
 
-![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-05/2021-12-05-giorni-fascia_anagrafica-70-79.png)
+![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-06/2021-12-06-fascia_anagrafica-sesso_maschile.png)
 
-![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-05/2021-12-05-giorni-fascia_anagrafica-80-89.png)
+![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-06/2021-12-06-fascia_anagrafica-totale.png)
 
-![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-05/2021-12-05-giorni-fascia_anagrafica-90+.png)
+![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-06/2021-12-06-giorni-dose-aggiuntiva.png)
 
-![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-05/2021-12-05-giorni-fornitore-Janssen.png)
+![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-06/2021-12-06-giorni-dosi_giornaliere.png)
 
-![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-05/2021-12-05-giorni-fornitore-Moderna.png)
+![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-06/2021-12-06-giorni-dosi_totali.png)
 
-![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-05/2021-12-05-giorni-fornitore-Pfizer-BioNTech.png)
+![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-06/2021-12-06-giorni-fascia_anagrafica-12-19.png)
 
-![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-05/2021-12-05-giorni-fornitore-Vaxzevria%20(AstraZeneca).png)
+![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-06/2021-12-06-giorni-fascia_anagrafica-20-29.png)
 
-![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-05/2021-12-05-giorni-pregressa-infezione.png)
+![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-06/2021-12-06-giorni-fascia_anagrafica-30-39.png)
 
-![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-05/2021-12-05-giorni-prima_dose-seconda_dose-barre.png)
+![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-06/2021-12-06-giorni-fascia_anagrafica-40-49.png)
 
-![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-05/2021-12-05-giorni-prima_dose-seconda_dose.png)
+![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-06/2021-12-06-giorni-fascia_anagrafica-50-59.png)
+
+![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-06/2021-12-06-giorni-fascia_anagrafica-60-69.png)
+
+![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-06/2021-12-06-giorni-fascia_anagrafica-70-79.png)
+
+![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-06/2021-12-06-giorni-fascia_anagrafica-80-89.png)
+
+![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-06/2021-12-06-giorni-fascia_anagrafica-90+.png)
+
+![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-06/2021-12-06-giorni-fornitore-Janssen.png)
+
+![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-06/2021-12-06-giorni-fornitore-Moderna.png)
+
+![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-06/2021-12-06-giorni-fornitore-Pfizer-BioNTech.png)
+
+![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-06/2021-12-06-giorni-fornitore-Vaxzevria%20(AstraZeneca).png)
+
+![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-06/2021-12-06-giorni-pregressa-infezione.png)
+
+![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-06/2021-12-06-giorni-prima_dose-seconda_dose-barre.png)
+
+![](https://github.com/MatteoOrlandini/COVID-19-Vaccination-Italy/blob/main/Charts/2021-12-06/2021-12-06-giorni-prima_dose-seconda_dose.png)
 
